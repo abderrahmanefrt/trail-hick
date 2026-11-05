@@ -1,183 +1,161 @@
 # 🏔️ TrailKernel — La Convolution d'Image en Haute Montagne
 
-**TrailKernel** est une application web éducative professionnelle conçue pour enseigner la **convolution d'image pas à pas**, du niveau débutant au niveau expert, à travers une métaphore alpine immersive.
+**TrailKernel** est une application web éducative interactive conçue pour apprendre et comprendre la **convolution d'image sans aucun prérequis mathématique**, à travers le thème ludique de la randonnée en montagne.
 
-> **Public cible** : Randonneurs, lycéens, étudiants et curieux sans bagage mathématique supérieur.  
-> **Principe directeur** : Le thème de la montagne sert l'explication sans jamais la remplacer. Tous les calculs matriciels restent transparents, explicites et vérifiables.
-
----
-
-## 🎯 Idée Centrale
-
-| Concept d'image / mathématique | Métaphore de randonnée |
-| :--- | :--- |
-| **Matrice en niveaux de gris (0–255)** | **Carte d'altitude (MNT)** : `0` = fond de lac / vallée, `255` = sommet enneigé. |
-| **Fenêtre glissante 3×3** | **Champ de vision du randonneur** observant ses 8 voisins immédiats et ses pieds à chaque pas. |
-| **Produit de convolution & somme pondérée** | **Pondération locale** : moyenne des altitudes environnantes. |
-| **Diviseur & normalisation** | **Préservation de l'altitude moyenne** (éviter l'avalanche de saturation blanche). |
-| **Flou uniforme (Box Blur)** | **Brouillard alpin** : estompe les aspérités et adoucit le relief. |
-| **Flou gaussien (Gaussian Blur)** | **Brume légère** : le centre pèse plus lourd que les coins lointains. |
-| **Filtre de netteté (Sharpen)** | **Jumelles de montagne** : amplifie les contrastes locaux. |
-| **Laplacien 8-connexe** | **Détecteur de crêtes & falaises** : nul sur un plateau plat, vif sur les corniches. |
-| **Embossage (Emboss)** | **Ombrage du relief (Hillshade)** : simule le soleil couchant rasant. |
-| **Opérateurs de Sobel (Gx & Gy)** | **Gradients de pente directionnels** : versants est-ouest et nord-sud. |
-| **Magnitude du gradient $\sqrt{G_x^2 + G_y^2}$** | **Carte de difficulté & risque d'avalanche** : vert = doux, rouge = à-pic. |
-| **Vraie convolution vs corrélation croisée** | **Retournement à 180° du masque** : identique pour un noyau symétrique, différent sur Sobel. |
+> **Principe fondamental** : Le thème de la montagne sert l'explication sans la déformer. Tous les calculs matriciels restent transparents, visibles et vérifiables en direct.
 
 ---
 
-## 🗺️ Sentier Pédagogique (11 Niveaux)
+## 💡 Comprendre la Convolution en 1 Minute Chrono
 
-### 🟢 Facile — Les Fondations
-1. **🗺️ Lire la carte** : Découverte des Modèles Numériques de Terrain (MNT), lecture interactive des altitudes au clic, altimètre sonore Web Audio proportionnel à la hauteur.
-2. **📈 Le profil du sentier** : Traitement d'un signal GPS 1D parasité, lissage par moyenne glissante `[1, 1, 1] ÷ 3` et élimination du pic de bruit.
-3. **🔭 La fenêtre 3×3** : Décomposition pas à pas des 9 produits, de la somme, de la division et de l'écrêtage `[0, 255]`.
+Imaginez que vous observez un paysage de montagne vu du ciel :
 
-### 🟡 Moyen — Les Outils du Cartographe
-4. **⚖️ Les coefficients** : Comparaison flou uniforme `/9` vs flou gaussien `/16`, démonstration choc de la saturation sans diviseur (`÷1`).
-5. **🧭 Les bords de la carte** : Comparaison côte à côte des trois stratégies de lisière : *clamp* (répéter), *zero* (fond d'abîme) et *wrap* (tore périodique).
-6. **🛠️ L'atelier du cartographe** : Palette d'outils (brouillard, jumelles, crêtes, ombrage, Sobel), inspecteur de pixel en direct sur reliefs « massif » et « plateau ».
+1. **Une image en noir et blanc = une carte d'altitude** :
+   - Chaque case (pixel) contient un nombre entre **0** et **255**.
+   - `0` = un lac ou une vallée sombre.
+   - `128` = un alpage ou une pente moyenne.
+   - `255` = un sommet rocheux enneigé et éclatant.
 
-### 🔴 Difficile — L'Analyse Spatiale Avancée
-7. **📐 La carte des pentes** : Décomposition Sobel X / Sobel Y et magnitude globale transformée en carte de raideur de pente (vert à rouge).
-8. **🕵️ Quelle carte est-ce ?** : Défi de reconnaissance à l'aveugle du filtre ayant produit la carte affichée, avec explications texturées.
-9. **🎯 Le défi du guide** : Forge libre d'un noyau 3×3 pour isoler une ligne de crête, évalué en temps réel par Écart Moyen Absolu (MAE) avec indices progressifs.
-10. **🔄 Convolution vs Corrélation & Composition** : Démonstration visuelle de la rotation à 180° du noyau ; preuve expérimentale que deux convolutions 3×3 successives équivalent à un filtre 5×5 pyramidal (`÷81`).
+2. **La convolution = une loupe 3×3 qui avance pas à pas** :
+   - À chaque pas, le marcheur regarde **les 9 cases sous sa loupe** (ses 8 voisins immédiats et ses propres pieds).
+   - Il multiplie chaque altitude par le chiffre écrit sur son filtre (les coefficients).
+   - Il additionne les 9 résultats et divise par le total pour obtenir la nouvelle altitude.
 
-### 🏆 Expert — Le Test Ultime
-11. **🏔️ Le Sommet (Examen Final de 100 points)** : 10 questions de mise en situation alpine. **Chaque réponse attendue est strictement calculée par le moteur mathématique** (zéro valeur arbitraire codée en dur). Bilan diagnostique par compétence avec bouton de révision vers le refuge concerné.
+3. **À quoi ça sert concrètement ?**
+   - **Pour gommer le bruit (flou / brouillard)** : on fait la moyenne des 9 voisins $\rightarrow$ l'image devient douce et lissée.
+   - **Pour détecter les falaises (contours / Sobel)** : on compare les voisins de gauche et de droite $\rightarrow$ dès que l'altitude change brutalement, la falaise s'allume en rouge vif !
+
+---
+
+## 🎮 Guide Pratique : Comment Jouer aux 5 Niveaux Essentiels
+
+Le parcours est concentré sur **5 étapes indispensables**, progressives et très simples à prendre en main :
+
+### 🗺️ Étape 1 : Lire la carte (Pixel = Altitude)
+* **Ce qu'on apprend** : Une image numérique est simplement une grille de nombres de 0 à 255.
+* **Ce que vous faites à l'écran** :
+  1. Cliquez avec votre souris sur **6 cases différentes** de la carte.
+  2. Regardez l'altimètre à droite afficher l'altitude exacte du point (ex: `192 / 255 m`).
+  3. *(Optionnel)* Activez le son en haut à droite : le ton monte dans les aigus quand vous cliquez sur un sommet !
+* **Condition de réussite** : Explorer 6 cases. Le bouton orange *« Passer à l'étape suivante → »* se débloque.
+
+---
+
+### 🔭 Étape 2 : La fenêtre 3×3 (Le Cœur du Calcul)
+* **Ce qu'on apprend** : Comment la convolution calcule un nouveau pixel en faisant la moyenne pondérée de ses 9 voisins.
+* **Ce que vous faites à l'écran** :
+  1. Cliquez sur une case de la grille 6×6 pour y poser le randonneur.
+  2. Un carré orange 3×3 apparaît sur la carte : c'est la vue du marcheur.
+  3. À droite, le tableau vous montre en direct les 9 multiplications et la division par 9.
+  4. Cliquez sur le bouton orange **« ✓ Valider le calcul pour la case (x, y) »**.
+* **Condition de réussite** : Répéter l'action sur **4 cases différentes**.
+
+---
+
+### ⚖️ Étape 3 : Flou, Poids & Saturation
+* **Ce qu'on apprend** : La différence entre flou uniforme et flou gaussien, et pourquoi la division est vitale pour éviter l'éblouissement.
+* **Ce que vous faites à l'écran** :
+  1. Cliquez sur les 3 boutons de comparaison :
+     - *« 🌫️ Brouillard (Box Blur /9) »*
+     - *« 🌥️ Brume légère (Gaussien /16) »*
+     - *« ⚠️ Sans division (diviseur = 1) »* $\rightarrow$ observez l'image devenir toute blanche (saturation à 255).
+  2. Répondez aux 3 questions du mini-quiz en bas :
+     - **Question 1** : Choisissez **« Identique »** (la moyenne d'une zone plate ne change pas).
+     - **Question 2** : Choisissez **« Saturation à 255 (tout blanc) »** (sans division, la somme explose).
+     - **Question 3** : Choisissez **« Le centre pèse 4/16 (25%) »** (le centre a plus d'importance).
+* **Condition de réussite** : Obtenir 3 réponses vertes au quiz.
+
+---
+
+### 📐 Étape 4 : Détecter les Falaises (Sobel & Pente)
+* **Ce qu'on apprend** : Comment le filtre de Sobel calcule la raideur du sol (gradient) et cartographie le risque d'avalanche.
+* **Ce que vous faites à l'écran** :
+  1. Observez la décomposition des pentes Est-Ouest (Sobel X) et Nord-Sud (Sobel Y).
+  2. Regardez la grande carte de difficulté en bas :
+     - 🟢 **Vert** = pente douce (marche facile)
+     - 🟡 **Jaune** = pente moyenne
+     - 🟠 **Orange** = pente raide
+     - 🔴 **Rouge vif** = falaise abrupte / à-pic
+  3. **Cliquez directement sur la zone rouge vif** au centre du massif.
+* **Condition de réussite** : Toucher la falaise la plus abrupte avec le pointeur.
+
+---
+
+### 🛠️ Étape 5 : L'Atelier Libre du Cartographe
+* **Ce qu'on apprend** : Manipuler tous les filtres comme de véritables outils de cartographie ou concevoir son propre masque 3×3.
+* **Ce que vous faites à l'écran** :
+  1. Cliquez sur **3 filtres différents** dans la barre d'outils (par exemple : *« Brouillard »*, puis *« Crêtes & falaises »*, puis *« Ombrage du relief »*).
+  2. Observez la carte de droite se métamorphoser instantanément.
+  3. *(Optionnel)* Cliquez sur *« ✏️ Personnalisé »* pour modifier vous-même les 9 chiffres du noyau et observer le résultat en direct !
+* **Condition de réussite** : Tester 3 filtres. Vous obtenez alors le rang suprême de **Guide de Haute Montagne** !
 
 ---
 
 ## 🎒 Gamification & Carnet de Rando
 
-- **Progression en Dénivelé Positif (D+)** : Chaque étape rapporte des mètres d'ascension cumulés.
+- **Progression en Dénivelé Positif (D+)** : Chaque étape franchie rapporte +250 m D+ pour atteindre 1 250 m D+.
 - **Rangs d'alpiniste** :
   - 🌲 *Marcheur Initié* (0 – 299 m D+)
   - 🥾 *Randonneur Aguerri* (300 – 699 m D+)
   - 🧗 *Alpiniste Chevronné* (700 – 1 199 m D+)
   - 🎖️ *Guide de Haute Montagne* (1 200+ m D+)
-- **Carnet de Rando interactif** : 11 fiches d'applications réelles débloquées au fil de l'eau (radar satellitaire SAR, drones de secours du PGHM, prévision des avalanches, réseaux profonds CNN).
-- **Mascotte originale** : *Bastien le Guide*, montagnard bienveillant en illustration vectorielle SVG exclusive.
-- **Sauvegarde locale résiliente** : `localStorage` versionné, protégé par `try/catch` avec bouton de réinitialisation.
-
----
-
-## 📸 Aperçu & Captures d'Écran
-
-<!-- Emplacement prévu pour vos captures d'écran de l'application -->
-```
-[Capture d'écran 1 : Page d'accueil avec balayage animé de la fenêtre 3x3]
-[Capture d'écran 2 : Décomposition transparente dans le StepCalculator]
-[Capture d'écran 3 : Carte des pentes de Sobel en fausses couleurs vert/rouge]
-[Capture d'écran 4 : Bilan diagnostique de l'examen final "Le Sommet"]
-```
+- **Carnet de Rando interactif (Bouton 📓)** : 5 fiches d'applications réelles débloquées au fil de l'ascension :
+  1. *Topographie & Satellites* (Modèles Numériques de Terrain IGN / MNT)
+  2. *Drones & Secours alpin* (Vision par ordinateur en haute montagne)
+  3. *Optique spatiale* (Radiométrie et saturation des capteurs solaires)
+  4. *Sécurité en montagne* (Cartes de vigilance avalanches sur pentes > 30°)
+  5. *Intelligence Artificielle* (Réseaux convolutifs profonds CNN)
+- **Mascotte Bastien le Guide** : Illustration vectorielle SVG 100% originale et bienveillante accompagnant chaque étape avec des conseils imagés.
+- **Sauvegarde LocalStorage sécurisée** : Votre progression est automatiquement enregistrée sur votre navigateur, avec possibilité de réinitialiser à tout moment.
 
 ---
 
 ## 🛠️ Stack Technique
 
-- **Bundler / Serveur** : Vite 8
-- **UI & Rendu** : React 19, HTML5 Canvas API (pixel art natif)
-- **Typage** : TypeScript 5.7 (strict, `noUncheckedIndexedAccess`)
-- **Styles & Design System** : Tailwind CSS 4, Design Tokens montagnards (`src/styles/tokens.ts`)
-- **Tests Unitaires** : Vitest (54 tests exhaustifs)
-- **Qualité & Formatage** : ESLint (flat config) + Prettier + EditorConfig
-- **Zéro dépendance lourde** : Aucun framework UI lourd, aucun code emprunté.
+- **Bundler & Dev Server** : Vite 8
+- **Framework UI** : React 19
+- **Langage** : TypeScript 5.7 strict (`noUncheckedIndexedAccess`, zéro `any`)
+- **Styles** : Tailwind CSS 4 + Design Tokens montagnards (`src/styles/tokens.ts`)
+- **Moteur graphique** : Canvas API HTML5 natif (haute performance, rendu pixel art)
+- **Audio** : Synthèse Web Audio API pure (altimètre sonore sans fichier audio externe)
+- **Tests** : Vitest (54 tests unitaires couvrant la totalité des calculs mathématiques)
+- **Linter & Formateur** : ESLint flat config + Prettier
 
 ---
 
-## 📂 Architecture du Projet
+## 🚀 Lancement Rapide en Local
 
-```
-TrailKernel/
-├── src/
-│   ├── core/                  # Moteur mathématique pur (zéro DOM, zéro React)
-│   │   ├── grid.ts            # Type Grid, setPixel, getPixel (clamp/zero/wrap), clampByte
-│   │   ├── convolve1d.ts      # Convolution 1D (profils d'altitude)
-│   │   ├── convolve2d.ts      # Convolution 2D 3×3 (corrélation ou vraie convolution)
-│   │   ├── kernels.ts         # Définition des noyaux (Box, Gaussien, Sobel, Laplacien...)
-│   │   ├── slope.ts           # Sobel X/Y, magnitude et détection de la pente maximale
-│   │   ├── composition.ts     # Cascade 3×3 vers 5×5 et produit de convolution matriciel
-│   │   ├── metrics.ts         # Calcul d'Écart Moyen Absolu (MAE) et score de similarité
-│   │   ├── terrain.ts         # Générateur déterministe de relief (massif et plateau)
-│   │   ├── random.ts          # Générateur pseudo-aléatoire Mulberry32 avec graine
-│   │   ├── exam.ts            # Calculateur dynamique des 10 questions du Sommet
-│   │   ├── storage.ts         # Persistance typée localStorage et gestion des rangs
-│   │   └── index.ts           # Barrel export
-│   ├── components/            # Composants UI interactifs
-│   │   ├── PixelGrid.tsx      # Rendu Canvas 2D avec palettes (niveaux de gris, topo, pente)
-│   │   ├── KernelEditor.tsx   # Matrice 3×3 éditable avec normalisation automatique
-│   │   ├── StepCalculator.tsx # Détail arithmétique pas à pas (9 produits, somme, division)
-│   │   ├── ProgressTrail.tsx  # Sentier balisé avec refuges et déblocage séquentiel
-│   │   ├── HikerMascot.tsx    # Mascotte originale SVG « Bastien le Guide »
-│   │   ├── CarnetModal.tsx    # Modal du carnet de terrain des applications réelles
-│   │   ├── HomeHero.tsx       # Page d'accueil avec balayage 3×3 animé et vraies statistiques
-│   │   └── Quiz.tsx           # QCM pédagogique avec explication immédiate
-│   ├── features/              # Les 11 refuges (niveaux) de l'ascension
-│   │   ├── level1/Level1.tsx  # Lire la carte
-│   │   ├── level2/Level2.tsx  # Le profil du sentier
-│   │   ├── level3/Level3.tsx  # La fenêtre 3×3
-│   │   ├── level4/Level4.tsx  # Les coefficients
-│   │   ├── level5/Level5.tsx  # Les bords de la carte
-│   │   ├── level6/Level6.tsx  # L'atelier du cartographe
-│   │   ├── level7/Level7.tsx  # La carte des pentes
-│   │   ├── level8/Level8.tsx  # Quelle carte est-ce ?
-│   │   ├── level9/Level9.tsx  # Le défi du guide
-│   │   ├── level10/Level10.tsx# Convolution vs Corrélation & Composition
-│   │   └── level11/Level11.tsx# Le Sommet (Examen 100 points)
-│   ├── data/
-│   │   └── texts.ts           # Unique source de vérité pour tous les textes en français
-│   ├── hooks/
-│   │   ├── useCanvasGrid.ts   # Logique de dessin et de coordonnées du canvas
-│   │   └── useSound.ts        # Altimètre sonore Web Audio (désactivé par défaut)
-│   ├── styles/
-│   │   ├── tokens.ts          # Tokens (forêt, roche, neige, coucher de soleil)
-│   │   └── global.css         # Import Tailwind et styles d'accessibilité
-│   ├── __tests__/             # 54 tests Vitest
-│   │   ├── core.test.ts       # Validation mathématique des filtres et modes de bord
-│   │   └── advanced.test.ts   # Validation de l'examen, de la composition et des métriques
-│   ├── App.tsx                # Shell de l'application et navigation
-│   └── main.tsx               # Point d'entrée React 19
-├── package.json
-├── tsconfig.json
-└── vite.config.ts
-```
-
----
-
-## 🚀 Démarrage Rapide
-
-### Prérequis
-- **Node.js** 20+ et **npm**
-
-### Installation
+### 1. Installation
 ```bash
 npm install
 ```
 
-### Commandes disponibles
+### 2. Démarrer le jeu
+```bash
+npm run dev
+```
+Ouvrez ensuite votre navigateur sur **[http://localhost:5173/](http://localhost:5173/)**.
+
+### 3. Autres scripts utiles
 | Commande | Action |
 | :--- | :--- |
-| `npm run dev` | Démarre le serveur local Vite en mode développement |
-| `npm run build` | Compile TypeScript (`tsc`) et génère le bundle de production Vite |
-| `npm run test` | Exécute les 54 tests unitaires avec Vitest |
-| `npm run lint` | Analyse le code source avec ESLint |
+| `npm run test` | Lance les 54 tests unitaires avec Vitest |
+| `npm run build` | Compile TypeScript et génère le bundle de production |
+| `npm run lint` | Analyse la qualité du code avec ESLint |
 | `npm run format` | Met en forme le code avec Prettier |
-| `npm run preview` | Prévisualise localement le build de production |
 
 ---
 
-## ♿ Accessibilité & Éthique Numérique
+## ♿ Accessibilité & Éthique
 
-- **Clavier & Focus** : Navigation possible au clavier avec anneaux de focus contrastés (`outline: 3px solid var(--color-sunset-500)`).
-- **Sensibilité au mouvement** : Respect strict de la directive système `prefers-reduced-motion` (désactivation de l'animation de balayage).
-- **Environnement sonore respectueux** : Retour audio par synthèse Web Audio **désactivé par défaut**.
-- **Honnêteté statistique** : Aucune fausse statistique générée ; le dénivelé et les fiches reflètent rigoureusement la progression réelle de l'utilisateur.
+- **Clavier & Focus** : Entièrement navigable au clavier avec anneaux de focus orange vif contrastés.
+- **Réduction des mouvements** : Respect de la directive système `prefers-reduced-motion` (désactivation douce des animations).
+- **Confort sonore** : Altimètre audio **désactivé par défaut**, activable au choix de l'utilisateur.
+- **Honnêteté des données** : Zéro fausse statistique ; chaque mètre de D+ et chaque calcul reflète strictement vos actions.
 
 ---
 
 ## 📄 Licence
 
-Projet conçu à des fins éducatives et de vulgarisation scientifique.
+Projet éducatif sous licence MIT — Conçu pour vulgariser la convolution matricielle de manière simple, visuelle et intuitive.
 Tous droits réservés © 2026 TrailKernel.
