@@ -3,6 +3,8 @@ import { T } from '@/data/texts';
 import ProgressTrail, { type TrailStage } from '@/components/ProgressTrail';
 import CarnetModal from '@/components/CarnetModal';
 import HomeHero from '@/components/HomeHero';
+import JeRetiensCard from '@/components/JeRetiensCard';
+import FinalRecapScreen from '@/components/FinalRecapScreen';
 
 import Level1 from '@/features/level1/Level1';
 import Level3 from '@/features/level3/Level3';
@@ -27,10 +29,17 @@ export default function App(): React.JSX.Element {
   const [isCarnetOpen, setIsCarnetOpen] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(true);
+  const [answeredMiniQuestions, setAnsweredMiniQuestions] = useState<
+    Record<number, boolean>
+  >({});
 
   // Sync state if initial storage loads
   useEffect(() => {
-    if (progress.lastActiveLevel && progress.lastActiveLevel >= 1 && progress.lastActiveLevel <= T.levels.length) {
+    if (
+      progress.lastActiveLevel &&
+      progress.lastActiveLevel >= 1 &&
+      progress.lastActiveLevel <= T.levels.length
+    ) {
       setCurrentLevelId(progress.lastActiveLevel);
     }
   }, [progress.lastActiveLevel]);
@@ -49,6 +58,7 @@ export default function App(): React.JSX.Element {
     const fresh = resetProgress();
     setProgress(fresh);
     setCurrentLevelId(1);
+    setAnsweredMiniQuestions({});
     setView('home');
     setShowResetConfirm(false);
   };
@@ -71,11 +81,17 @@ export default function App(): React.JSX.Element {
 
   const currentLevelData = T.levels.find((lvl) => lvl.id === currentLevelId);
   const isCurrentComplete = progress.completedLevels.includes(currentLevelId);
+  const isQuestionAnswered = Boolean(
+    answeredMiniQuestions[currentLevelId] ||
+    (isCurrentComplete && progress.completedLevels.includes(currentLevelId + 1)),
+  );
 
   const nextLevelId = currentLevelId + 1;
-  const canGoNext =
-    nextLevelId <= T.levels.length &&
-    (isCurrentComplete || stages.find((s) => s.id === nextLevelId)?.unlocked === true);
+  const hasNext = nextLevelId <= T.levels.length;
+  const canGoNext = hasNext && isCurrentComplete && isQuestionAnswered;
+
+  const currentRecapCard = T.recapCards.find((c) => c.levelId === currentLevelId);
+  const currentMiniQuestion = T.miniQuestions.find((q) => q.levelId === currentLevelId);
 
   const rankInfo = getRankFromElevation(progress.elevationGainMeters);
 
@@ -118,9 +134,7 @@ export default function App(): React.JSX.Element {
               title="Dénivelé positif accumulé (XP)"
             >
               <span className="text-orange-400 font-bold">▲</span>
-              <span className="font-bold text-white">
-                {progress.elevationGainMeters}
-              </span>
+              <span className="font-bold text-white">{progress.elevationGainMeters}</span>
               <span className="text-stone-400 text-[10px]">m D+</span>
             </div>
 
@@ -181,7 +195,7 @@ export default function App(): React.JSX.Element {
 
       {/* Main Content Area */}
       <main className="max-w-5xl mx-auto px-4 py-6 w-full flex-1">
-        {/* Onboarding Guide Box (Always visible at the top to help the user understand immediately) */}
+        {/* Onboarding Guide Box (Always accessible) */}
         {showHowToPlay && (
           <div className="mb-6 rounded-2xl bg-amber-50/80 border border-amber-300/80 p-4 sm:p-5 shadow-xs space-y-3 relative">
             <div className="flex items-center justify-between">
@@ -231,7 +245,8 @@ export default function App(): React.JSX.Element {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-md">
-                      Étape {currentLevelData.id} / {T.levels.length} — {currentLevelData.difficulty}
+                      Refuge {currentLevelData.id} / {T.levels.length} —{' '}
+                      {currentLevelData.difficulty}
                     </span>
                     <span className="text-[11px] font-mono text-stone-500 font-bold">
                       +{ELEVATION_PER_LEVEL} m D+
@@ -242,7 +257,7 @@ export default function App(): React.JSX.Element {
                     {currentLevelData.title}
                   </h2>
                   <p className="text-xs sm:text-sm text-stone-500 font-medium">
-                    {currentLevelData.objective}
+                    Objectif : {currentLevelData.objective}
                   </p>
 
                   {/* Explicit Mission Instruction */}
@@ -291,13 +306,49 @@ export default function App(): React.JSX.Element {
                 )}
               </div>
 
+              {/* "Je retiens" Card + Mini Question (appears when level objective is achieved) */}
+              {isCurrentComplete && currentRecapCard && currentMiniQuestion && (
+                <JeRetiensCard
+                  card={currentRecapCard}
+                  miniQuestion={currentMiniQuestion}
+                  isQuestionAnswered={isQuestionAnswered}
+                  onQuestionAnswered={() =>
+                    setAnsweredMiniQuestions((prev) => ({
+                      ...prev,
+                      [currentLevelId]: true,
+                    }))
+                  }
+                />
+              )}
+
+              {/* Final Summary Screen for Level 5 ("Ce que tu sais maintenant") */}
+              {currentLevelId === 5 && isCurrentComplete && isQuestionAnswered && (
+                <FinalRecapScreen
+                  onOpenCarnet={() => setIsCarnetOpen(true)}
+                  onReplayLevel={(lvl) => setCurrentLevelId(lvl)}
+                />
+              )}
+
               {/* Next Level navigation button */}
-              {isCurrentComplete && canGoNext && (
-                <div className="pt-4 border-t border-stone-100 flex justify-end">
+              {hasNext && isCurrentComplete && (
+                <div className="pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  {!isQuestionAnswered ? (
+                    <p className="text-xs text-amber-800 font-semibold bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
+                      ⚠️ Répondez à la mini-question ci-dessus pour débloquer l'étape
+                      suivante !
+                    </p>
+                  ) : (
+                    <span className="text-xs text-green-700 font-bold flex items-center gap-1.5">
+                      <span>✓</span>
+                      <span>Idée validée, en route pour le refuge suivant !</span>
+                    </span>
+                  )}
+
                   <button
                     type="button"
+                    disabled={!canGoNext}
                     onClick={() => setCurrentLevelId(nextLevelId)}
-                    className="px-6 py-3 rounded-xl font-bold text-sm bg-orange-600 hover:bg-orange-500 text-white shadow-md transition-all cursor-pointer flex items-center gap-2 transform active:scale-95"
+                    className="px-6 py-3 rounded-xl font-bold text-sm bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md transition-all cursor-pointer flex items-center gap-2 transform active:scale-95"
                   >
                     <span>{T.level.next}</span>
                   </button>
@@ -311,7 +362,7 @@ export default function App(): React.JSX.Element {
       {/* Footer */}
       <footer className="text-center py-5 px-4 text-xs text-stone-500 border-t border-stone-200 bg-stone-50">
         <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          <span>TrailKernel — Les 5 Essentiels de la convolution matricielle</span>
+          <span>TrailKernel — Le parcours d'Amine en 5 étapes clés</span>
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -337,6 +388,7 @@ export default function App(): React.JSX.Element {
         isOpen={isCarnetOpen}
         onClose={() => setIsCarnetOpen(false)}
         unlockedLevelIds={progress.unlockedNotebooks}
+        unlockedCardIds={progress.unlockedCards}
       />
 
       {/* Reset Confirmation Modal */}
@@ -351,7 +403,8 @@ export default function App(): React.JSX.Element {
               Réinitialiser l'ascension ?
             </h3>
             <p className="text-xs text-stone-600 leading-relaxed">
-              Toutes les étapes franchies, le dénivelé accumulé et les fiches débloquées seront remis à zéro.
+              Toutes les étapes franchies, les cartes retenues et le dénivelé accumulé
+              seront remis à zéro.
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <button

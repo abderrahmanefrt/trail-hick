@@ -5,6 +5,7 @@
  * - Sobel components & steepest pixel detection
  * - Exam 100-point question verification (all answers mathematically calculated)
  * - Gamification & progress rank calculations
+ * - Storage versioning & card unlocking
  */
 
 import { describe, it, expect } from 'vitest';
@@ -22,6 +23,7 @@ import {
   slopeMap,
   findSteepestPixel,
   getRankFromElevation,
+  grantLevelReward,
   computeQ1,
   computeQ2,
   computeQ3,
@@ -34,6 +36,7 @@ import {
   computeQ10,
   getExamQuestions,
 } from '../core';
+import { T } from '../data/texts';
 
 describe('Metrics & Similarity', () => {
   it('MAE is 0 for identical grids', () => {
@@ -117,7 +120,7 @@ describe('Sobel components & steepest pixel', () => {
   });
 });
 
-describe('Gamification: Elevation & Ranks', () => {
+describe('Gamification: Elevation & Ranks & Card Unlocking', () => {
   it('correctly maps D+ meters to hiker ranks', () => {
     expect(getRankFromElevation(0).rank).toBe('Marcheur');
     expect(getRankFromElevation(299).rank).toBe('Marcheur');
@@ -127,6 +130,54 @@ describe('Gamification: Elevation & Ranks', () => {
     expect(getRankFromElevation(1199).rank).toBe('Alpiniste');
     expect(getRankFromElevation(1200).rank).toBe('Guide de haute montagne');
     expect(getRankFromElevation(2500).rank).toBe('Guide de haute montagne');
+  });
+
+  it('grantLevelReward unlocks levels, notebooks and "Je retiens" cards', () => {
+    const initial = {
+      version: 2,
+      completedLevels: [],
+      elevationGainMeters: 0,
+      unlockedNotebooks: [],
+      unlockedCards: [],
+      examScore: null,
+      lastActiveLevel: 1,
+    };
+
+    const next = grantLevelReward(initial, 1, 250);
+    expect(next.completedLevels).toContain(1);
+    expect(next.unlockedCards).toContain(1);
+    expect(next.unlockedNotebooks).toContain(1);
+    expect(next.elevationGainMeters).toBe(250);
+  });
+});
+
+describe('Pedagogical Curriculum for Amine', () => {
+  it('has exactly 5 "Je retiens" cards corresponding to the 5 core ideas', () => {
+    expect(T.recapCards.length).toBe(5);
+    expect(T.recapCards[0]?.takeaway).toBe(
+      'Une image est une grille de nombres (0 à 255).',
+    );
+    expect(T.recapCards[1]?.takeaway).toBe(
+      'Un nouveau pixel se calcule à partir de ses 8 voisins : multiplier, additionner, diviser.',
+    );
+    expect(T.recapCards[2]?.takeaway).toBe(
+      "Les coefficients (le noyau) décident de l'effet ; la division évite la saturation.",
+    );
+    expect(T.recapCards[3]?.takeaway).toBe(
+      'Un autre noyau (Sobel) détecte les changements brusques, donc les contours.',
+    );
+    expect(T.recapCards[4]?.takeaway).toBe(
+      "Une même opération avec des noyaux différents donne des effets différents : c'est la convolution.",
+    );
+  });
+
+  it('has 5 mini-questions, each with exactly 1 correct answer among 3 choices', () => {
+    expect(T.miniQuestions.length).toBe(5);
+    T.miniQuestions.forEach((q) => {
+      expect(q.options.length).toBe(3);
+      const correctOptions = q.options.filter((opt) => opt.correct);
+      expect(correctOptions.length).toBe(1);
+    });
   });
 });
 

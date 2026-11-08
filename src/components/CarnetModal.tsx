@@ -1,21 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { T } from '@/data/texts';
 
 interface CarnetModalProps {
   isOpen: boolean;
   onClose: () => void;
   unlockedLevelIds: number[];
+  unlockedCardIds?: number[];
 }
 
 /**
- * Carnet de Rando modal displaying real-world industrial and scientific applications
- * of image convolution in mountain, geospatial, and robotic environments.
+ * Carnet de Rando modal displaying:
+ * 1) The "Je retiens" pedagogical cards unlocked by Amine.
+ * 2) The real-world applications in mountain, satellite, and robotic environments.
  */
 export default function CarnetModal({
   isOpen,
   onClose,
   unlockedLevelIds,
+  unlockedCardIds = unlockedLevelIds,
 }: CarnetModalProps): React.JSX.Element | null {
+  const [activeTab, setActiveTab] = useState<'cards' | 'applications'>('cards');
+
   if (!isOpen) return null;
 
   return (
@@ -25,7 +30,7 @@ export default function CarnetModal({
       aria-modal="true"
       aria-labelledby="carnet-title"
     >
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-stone-50 rounded-2xl border border-stone-300 shadow-2xl flex flex-col overflow-hidden">
+      <div className="relative w-full max-w-2xl max-h-[85vh] bg-stone-50 rounded-3xl border border-stone-300 shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
         <div className="p-4 sm:p-5 bg-stone-900 text-stone-100 flex items-center justify-between border-b border-stone-800">
           <div className="flex items-center gap-3">
@@ -37,10 +42,10 @@ export default function CarnetModal({
                 id="carnet-title"
                 className="text-lg font-black tracking-tight text-white"
               >
-                {T.nav.notebook}
+                {T.nav.notebook} d'Amine
               </h2>
               <p className="text-xs text-stone-400">
-                Applications réelles de la convolution en milieu alpin et spatial
+                Idées retenues et applications réelles de la vision par ordinateur
               </p>
             </div>
           </div>
@@ -54,60 +59,155 @@ export default function CarnetModal({
           </button>
         </div>
 
-        {/* Notebook Content List */}
+        {/* Tab Switcher */}
+        <div className="flex border-b border-stone-200 bg-white px-4 pt-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab('cards')}
+            className={`pb-2.5 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'cards'
+                ? 'border-orange-600 text-orange-700'
+                : 'border-transparent text-stone-500 hover:text-stone-800'
+            }`}
+          >
+            <span>💡</span>
+            <span>
+              Mes cartes "Je retiens" ({unlockedCardIds.length}/{T.recapCards.length})
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('applications')}
+            className={`pb-2.5 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
+              activeTab === 'applications'
+                ? 'border-orange-600 text-orange-700'
+                : 'border-transparent text-stone-500 hover:text-stone-800'
+            }`}
+          >
+            <span>🛰️</span>
+            <span>
+              Applications Réelles ({unlockedLevelIds.length}/{T.notebook.length})
+            </span>
+          </button>
+        </div>
+
+        {/* Tab Content */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4 flex-1">
-          <div className="text-xs text-stone-600 bg-orange-50 border border-orange-200 p-3 rounded-xl">
-            <strong>Fiches de terrain débloquées :</strong> {unlockedLevelIds.length} /{' '}
-            {T.notebook.length}. Chaque niveau franchi enrichit votre carnet d'une
-            application professionnelle concrète !
-          </div>
+          {activeTab === 'cards' ? (
+            <div className="space-y-3">
+              <div className="text-xs text-stone-600 bg-amber-50 border border-amber-200 p-3 rounded-xl">
+                Ces 5 cartes résument toute la progression. Chaque niveau terminé y dépose
+                son idée clé !
+              </div>
 
-          <div className="grid grid-cols-1 gap-3.5">
-            {T.notebook.map((entry) => {
-              const isUnlocked = unlockedLevelIds.includes(entry.levelId);
+              <div className="grid grid-cols-1 gap-3">
+                {T.recapCards.map((card) => {
+                  const isUnlocked = unlockedCardIds.includes(card.levelId);
 
-              return (
-                <div
-                  key={entry.levelId}
-                  className={`rounded-xl border p-4 transition-all ${
-                    isUnlocked
-                      ? 'bg-white border-stone-200 shadow-xs'
-                      : 'bg-stone-100/70 border-stone-200/60 opacity-60'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className="text-2xl shrink-0 p-2 bg-stone-100 rounded-xl"
-                      role="img"
-                      aria-hidden="true"
+                  return (
+                    <div
+                      key={card.levelId}
+                      className={`rounded-2xl border p-4 transition-all ${
+                        isUnlocked
+                          ? 'bg-white border-orange-200 shadow-xs'
+                          : 'bg-stone-100/60 border-stone-200/60 opacity-60'
+                      }`}
                     >
-                      {isUnlocked ? entry.icon : '🔒'}
-                    </span>
-                    <div className="space-y-1 flex-1">
-                      <div className="flex flex-wrap items-center justify-between gap-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100/60 px-2 py-0.5 rounded">
-                          {entry.category} (Niveau {entry.levelId})
+                      <div className="flex items-start gap-3">
+                        <span
+                          className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                            isUnlocked
+                              ? 'bg-orange-600 text-white'
+                              : 'bg-stone-300 text-stone-600'
+                          }`}
+                        >
+                          {card.levelId}
                         </span>
-                        {!isUnlocked && (
-                          <span className="text-[10px] font-semibold text-stone-400">
-                            Terminez le niveau {entry.levelId}
-                          </span>
-                        )}
+
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-800 bg-orange-100/70 px-2 py-0.5 rounded">
+                              {card.badge}
+                            </span>
+                            {!isUnlocked && (
+                              <span className="text-[10px] text-stone-400 font-semibold">
+                                🔒 À débloquer au refuge {card.levelId}
+                              </span>
+                            )}
+                          </div>
+
+                          <h3 className="font-bold text-sm text-stone-900">
+                            {isUnlocked ? card.title : 'Idée encore cachée'}
+                          </h3>
+
+                          <p className="text-xs text-stone-700 font-medium leading-relaxed">
+                            {isUnlocked
+                              ? `« ${card.takeaway} »`
+                              : 'Terminez ce refuge sur le sentier pour révéler cette idée essentielle.'}
+                          </p>
+                        </div>
                       </div>
-                      <h3 className="font-bold text-sm text-stone-800">
-                        {isUnlocked ? entry.title : 'Fiche confidentielle verrouillée'}
-                      </h3>
-                      <p className="text-xs text-stone-600 leading-relaxed">
-                        {isUnlocked
-                          ? entry.application
-                          : 'Progressez le long du sentier de convolution pour révéler cette application industrielle.'}
-                      </p>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="text-xs text-stone-600 bg-orange-50 border border-orange-200 p-3 rounded-xl">
+                Chaque étape franchie débloque une fiche concrète utilisée par les
+                scientifiques et secouristes !
+              </div>
+
+              <div className="grid grid-cols-1 gap-3.5">
+                {T.notebook.map((entry) => {
+                  const isUnlocked = unlockedLevelIds.includes(entry.levelId);
+
+                  return (
+                    <div
+                      key={entry.levelId}
+                      className={`rounded-2xl border p-4 transition-all ${
+                        isUnlocked
+                          ? 'bg-white border-stone-200 shadow-xs'
+                          : 'bg-stone-100/70 border-stone-200/60 opacity-60'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <span
+                          className="text-2xl shrink-0 p-2 bg-stone-100 rounded-xl"
+                          role="img"
+                          aria-hidden="true"
+                        >
+                          {isUnlocked ? entry.icon : '🔒'}
+                        </span>
+                        <div className="space-y-1 flex-1">
+                          <div className="flex flex-wrap items-center justify-between gap-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100/60 px-2 py-0.5 rounded">
+                              {entry.category} (Étape {entry.levelId})
+                            </span>
+                            {!isUnlocked && (
+                              <span className="text-[10px] font-semibold text-stone-400">
+                                Terminez l'étape {entry.levelId}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="font-bold text-sm text-stone-800">
+                            {isUnlocked ? entry.title : 'Fiche de terrain verrouillée'}
+                          </h3>
+                          <p className="text-xs text-stone-600 leading-relaxed">
+                            {isUnlocked
+                              ? entry.application
+                              : 'Franchissez ce refuge pour débloquer cette application professionnelle.'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}

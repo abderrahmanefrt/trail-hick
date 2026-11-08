@@ -93,20 +93,22 @@ Le parcours est concentré sur **5 étapes indispensables**, progressives et tr�
 
 ## 🎒 Gamification & Carnet de Rando
 
+- **Cartes mémo « Je retiens » & Mini-questions** : À la fin de chaque étape, Amine débloque une carte résumé simple avec animation sobre, puis répond à une mini-question pour valider l'acquisition de la notion avant de poursuivre.
+- **Écran récapitulatif final** : À la fin du niveau 5, un bilan illustré « Ce que tu sais maintenant » rassemble les 5 cartes clés dans l'ordre.
 - **Progression en Dénivelé Positif (D+)** : Chaque étape franchie rapporte +250 m D+ pour atteindre 1 250 m D+.
 - **Rangs d'alpiniste** :
   - 🌲 *Marcheur Initié* (0 – 299 m D+)
   - 🥾 *Randonneur Aguerri* (300 – 699 m D+)
   - 🧗 *Alpiniste Chevronné* (700 – 1 199 m D+)
   - 🎖️ *Guide de Haute Montagne* (1 200+ m D+)
-- **Carnet de Rando interactif (Bouton 📓)** : 5 fiches d'applications réelles débloquées au fil de l'ascension :
+- **Carnet de Rando interactif (Bouton 📓)** : Comporte un onglet pour relire ses **Cartes « Je retiens »** et un onglet pour 5 fiches d'**Applications réelles** débloquées au fil de l'ascension :
   1. *Topographie & Satellites* (Modèles Numériques de Terrain IGN / MNT)
   2. *Drones & Secours alpin* (Vision par ordinateur en haute montagne)
   3. *Optique spatiale* (Radiométrie et saturation des capteurs solaires)
   4. *Sécurité en montagne* (Cartes de vigilance avalanches sur pentes > 30°)
   5. *Intelligence Artificielle* (Réseaux convolutifs profonds CNN)
 - **Mascotte Bastien le Guide** : Illustration vectorielle SVG 100% originale et bienveillante accompagnant chaque étape avec des conseils imagés.
-- **Sauvegarde LocalStorage sécurisée** : Votre progression est automatiquement enregistrée sur votre navigateur, avec possibilité de réinitialiser à tout moment.
+- **Sauvegarde LocalStorage sécurisée** : Votre progression et vos cartes débloquées sont automatiquement enregistrées sur votre navigateur (version v2 avec migration automatique), avec possibilité de réinitialiser à tout moment.
 
 ---
 
@@ -118,7 +120,7 @@ Le parcours est concentré sur **5 étapes indispensables**, progressives et tr�
 - **Styles** : Tailwind CSS 4 + Design Tokens montagnards (`src/styles/tokens.ts`)
 - **Moteur graphique** : Canvas API HTML5 natif (haute performance, rendu pixel art)
 - **Audio** : Synthèse Web Audio API pure (altimètre sonore sans fichier audio externe)
-- **Tests** : Vitest (54 tests unitaires couvrant la totalité des calculs mathématiques)
+- **Tests** : Vitest (57 tests unitaires couvrant la totalité des calculs mathématiques et du système de progression)
 - **Linter & Formateur** : ESLint flat config + Prettier
 
 ---
