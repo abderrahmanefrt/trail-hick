@@ -111,7 +111,7 @@ interface Level4Props {
 }
 
 /**
- * Level 4: "Les coefficients".
+ * Level 4 (Étape 3): "Flou, Poids & Saturation".
  * Compares uniform vs gaussian blur, auto-normalization, and highlights saturation when forgetting to divide.
  * Success: 3 correct answers.
  */
@@ -141,18 +141,19 @@ export default function Level4({ onComplete }: Level4Props): React.JSX.Element {
   const levelInfo = T.levels.find((l) => l.id === 3);
 
   return (
-    <div className="space-y-4">
-      <div className="bg-stone-50 p-3 rounded-lg border border-stone-200">
-        <p className="text-sm text-stone-700">{levelInfo?.description}</p>
+    <div className="space-y-6">
+      <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/90 text-xs text-stone-700 leading-relaxed">
+        <p>{levelInfo?.description}</p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Preset Filter Buttons */}
+      <div className="flex flex-wrap items-center gap-2.5">
         <button
           type="button"
           onClick={() => setActiveTab('uniform')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
             activeTab === 'uniform'
-              ? 'bg-orange-600 text-white border-orange-700 shadow-xs'
+              ? 'bg-orange-600 text-white border-orange-700 shadow-sm'
               : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-50'
           }`}
         >
@@ -161,9 +162,9 @@ export default function Level4({ onComplete }: Level4Props): React.JSX.Element {
         <button
           type="button"
           onClick={() => setActiveTab('gaussian')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
             activeTab === 'gaussian'
-              ? 'bg-orange-600 text-white border-orange-700 shadow-xs'
+              ? 'bg-orange-600 text-white border-orange-700 shadow-sm'
               : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-50'
           }`}
         >
@@ -172,9 +173,9 @@ export default function Level4({ onComplete }: Level4Props): React.JSX.Element {
         <button
           type="button"
           onClick={() => setActiveTab('saturated')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
             activeTab === 'saturated'
-              ? 'bg-red-700 text-white border-red-800 shadow-xs'
+              ? 'bg-red-700 text-white border-red-800 shadow-sm'
               : 'bg-red-50 text-red-700 border-red-300 hover:bg-red-100'
           }`}
         >
@@ -183,48 +184,59 @@ export default function Level4({ onComplete }: Level4Props): React.JSX.Element {
       </div>
 
       {activeTab === 'saturated' && (
-        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-900 text-xs">
+        <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-950 text-xs shadow-xs leading-relaxed">
           <strong>Constat d'avalanche :</strong> Les 9 pixels sont sommés sans diviser par
           9. Le résultat dépasse systématiquement 255 et s'écrête en un plateau blanc
-          aveuglant.
+          aveuglant !
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
-          <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+      {/* Side-by-side Grids with Wooden Frames */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
             Relief brut (Falaise du plateau)
           </span>
-          <PixelGrid
-            grid={TERRAIN}
-            cellSize={20}
-            showNumbers={false}
-            showGrid={false}
-            ariaLabel="Terrain original brut"
-          />
+          <div className="wood-frame rounded-2xl p-2 bg-[#fdfaf3]">
+            <PixelGrid
+              grid={TERRAIN}
+              cellSize={22}
+              showNumbers={false}
+              showGrid={false}
+              ariaLabel="Terrain original brut"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-stone-200">
-          <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
             {activeTab === 'uniform' && 'Flou uniforme (/9)'}
             {activeTab === 'gaussian' && 'Flou gaussien (/16)'}
             {activeTab === 'saturated' && 'Saturation pure (÷1)'}
           </span>
-          <PixelGrid
-            grid={activeResult}
-            cellSize={20}
-            showNumbers={false}
-            showGrid={false}
-            ariaLabel="Terrain après application du filtre"
-          />
+          <div className="wood-frame rounded-2xl p-2 bg-[#fdfaf3]">
+            <PixelGrid
+              grid={activeResult}
+              cellSize={22}
+              showNumbers={false}
+              showGrid={false}
+              ariaLabel="Terrain après application du filtre"
+            />
+          </div>
         </div>
       </div>
 
+      {/* Calibration Quiz with Wood Header */}
       <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700">
-            Questions d'étalonnage ({correctCount} / {REQUIRED_PREDICTIONS} validées)
+        <div className="wood-sign-plate rounded-xl p-3 text-white text-xs relative shadow-xs flex justify-between items-center">
+          <span className="wood-rivet absolute top-2 left-2" />
+          <span className="wood-rivet absolute top-2 right-2" />
+          <h4 className="font-black uppercase tracking-wider text-amber-100 pl-4">
+            Questions d'étalonnage
           </h4>
+          <span className="bg-amber-900/80 text-amber-200 px-2.5 py-0.5 rounded-md font-mono font-bold">
+            {correctCount} / {REQUIRED_PREDICTIONS} validées
+          </span>
         </div>
         {QUIZ_QUESTIONS.map((q, idx) => (
           <Quiz

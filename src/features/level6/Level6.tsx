@@ -57,7 +57,7 @@ interface Level6Props {
 }
 
 /**
- * Level 6: "L'atelier du cartographe".
+ * Level 6 (Étape 5): "L'Atelier Libre du Cartographe".
  * Full cartographer toolkit: presets (blur, sharpen, edges, hillshade, slope),
  * custom 3x3 kernel editor, live pixel inspector, and massif/plateau terrain presets.
  * Success: 3 filters tested.
@@ -117,22 +117,23 @@ export default function Level6({ onComplete }: Level6Props): React.JSX.Element {
     activeFilterKey === 'sobelY';
 
   return (
-    <div className="space-y-5">
-      <div className="bg-stone-50 p-3 rounded-lg border border-stone-200">
-        <p className="text-sm text-stone-700">{levelInfo?.description}</p>
+    <div className="space-y-6">
+      <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/90 text-xs text-stone-700 leading-relaxed">
+        <p>{levelInfo?.description}</p>
       </div>
 
+      {/* Terrain Switch & Tool Counter */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">
+          <span className="text-xs font-black text-stone-600 uppercase tracking-wide">
             Relief :
           </span>
           <button
             type="button"
             onClick={() => setTerrainType('massif')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
               terrainType === 'massif'
-                ? 'bg-green-700 text-white border-green-800 shadow-xs'
+                ? 'bg-emerald-700 text-white border-emerald-800'
                 : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-50'
             }`}
           >
@@ -141,9 +142,9 @@ export default function Level6({ onComplete }: Level6Props): React.JSX.Element {
           <button
             type="button"
             onClick={() => setTerrainType('plateau')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
               terrainType === 'plateau'
-                ? 'bg-green-700 text-white border-green-800 shadow-xs'
+                ? 'bg-emerald-700 text-white border-emerald-800'
                 : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-50'
             }`}
           >
@@ -151,12 +152,13 @@ export default function Level6({ onComplete }: Level6Props): React.JSX.Element {
           </button>
         </div>
 
-        <div className="text-xs font-bold text-stone-600 bg-stone-100 px-3 py-1.5 rounded-lg border border-stone-200">
+        <div className="text-xs font-bold text-stone-700 bg-amber-100/80 px-3 py-1.5 rounded-xl border border-amber-300">
           Outils testés : {testedFilters.size} / {REQUIRED_FILTERS}
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-1.5">
+      {/* Preset Toolbar */}
+      <div className="flex flex-wrap gap-2">
         {(Object.keys(FILTER_PRESETS) as PresetKey[]).map((key) => {
           const cfg = FILTER_PRESETS[key];
           if (!cfg) return null;
@@ -168,11 +170,11 @@ export default function Level6({ onComplete }: Level6Props): React.JSX.Element {
               key={key}
               type="button"
               onClick={() => handleSelectFilter(key)}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
                 isSelected
-                  ? 'bg-orange-600 text-white border-orange-700 shadow-xs'
+                  ? 'bg-orange-600 text-white border-orange-700 shadow-sm ring-1 ring-orange-300'
                   : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-50'
-              } ${isDone && !isSelected ? 'ring-1 ring-green-500' : ''}`}
+              } ${isDone && !isSelected ? 'border-emerald-500' : ''}`}
             >
               {cfg.name}
             </button>
@@ -182,9 +184,9 @@ export default function Level6({ onComplete }: Level6Props): React.JSX.Element {
         <button
           type="button"
           onClick={() => handleSelectFilter('custom')}
-          className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer shadow-xs ${
             activeFilterKey === 'custom'
-              ? 'bg-orange-600 text-white border-orange-700 shadow-xs'
+              ? 'bg-orange-600 text-white border-orange-700 shadow-sm'
               : 'bg-white text-stone-700 border-stone-300 hover:bg-stone-50'
           }`}
         >
@@ -193,65 +195,76 @@ export default function Level6({ onComplete }: Level6Props): React.JSX.Element {
       </div>
 
       {requiresDisplayShift && (
-        <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-xs">
+        <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-950 text-xs shadow-xs leading-relaxed">
           <strong>Note de cartographie :</strong> Ce filtre différentiel génère des
           valeurs négatives ou au-delà de 255.
           {activeFilterKey === 'emboss'
             ? ' Un décalage de +128 est appliqué pour centrer la lumière neutre sur le gris moyen.'
-            : ' Les valeurs négatives sont écrêtées à 0 (noir) et les dépassements à 255 (blanc) pour la visualisation.'}
+            : ' Les valeurs négatives sont ramenées à 0 (noir) et les dépassements à 255 (blanc) pour la visualisation.'}
         </div>
       )}
 
+      {/* Side-by-side Canvases with Wooden Frames */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-stone-200 shadow-xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
             Carte source (cliquez pour inspecter)
           </span>
-          <PixelGrid
-            grid={terrain}
-            cellSize={20}
-            showNumbers={false}
-            showGrid={true}
-            highlightWindow={inspectedPos}
-            onCellClick={(x, y) => setInspectedPos({ x, y })}
-            ariaLabel="Carte d'altitude source"
-          />
+          <div className="wood-frame rounded-2xl p-2 bg-[#fdfaf3]">
+            <PixelGrid
+              grid={terrain}
+              cellSize={20}
+              showNumbers={false}
+              showGrid={true}
+              highlightWindow={inspectedPos}
+              onCellClick={(x, y) => setInspectedPos({ x, y })}
+              ariaLabel="Carte d'altitude source"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-stone-200 shadow-xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-stone-600">
             {activeConfig.name}
           </span>
-          <PixelGrid
-            grid={filteredGrid}
-            cellSize={20}
-            showNumbers={false}
-            showGrid={true}
-            ariaLabel="Résultat de la convolution"
-          />
+          <div className="wood-frame rounded-2xl p-2 bg-[#fdfaf3]">
+            <PixelGrid
+              grid={filteredGrid}
+              cellSize={20}
+              showNumbers={false}
+              showGrid={true}
+              ariaLabel="Résultat de la convolution"
+            />
+          </div>
         </div>
       </div>
 
       {activeFilterKey === 'custom' && (
-        <div className="p-4 rounded-xl border border-stone-200 bg-white shadow-xs max-w-sm mx-auto">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-stone-600 mb-2 text-center">
+        <div className="wood-board rounded-2xl p-5 max-w-md mx-auto text-white relative shadow-md">
+          <span className="wood-rivet absolute top-2.5 left-2.5" />
+          <span className="wood-rivet absolute top-2.5 right-2.5" />
+          <h4 className="text-xs font-black uppercase tracking-wider text-amber-200 mb-3 text-center">
             Atelier de forge du noyau 3×3
           </h4>
-          <KernelEditor kernel={customKernel} onChange={setCustomKernel} />
+          <div className="parchment-panel rounded-xl p-4 text-stone-900">
+            <KernelEditor kernel={customKernel} onChange={setCustomKernel} />
+          </div>
         </div>
       )}
 
       {inspectedPos && inspectedNeighbours && (
         <div className="pt-2">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
+          <h4 className="text-xs font-black uppercase tracking-wider text-stone-700 mb-2">
             Inspection en direct du point ({inspectedPos.x}, {inspectedPos.y})
           </h4>
-          <StepCalculator
-            pixels={inspectedNeighbours}
-            coefficients={activeConfig.kernel.values}
-            divisor={activeConfig.kernel.divisor}
-            offset={activeConfig.kernel.offset}
-          />
+          <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+            <StepCalculator
+              pixels={inspectedNeighbours}
+              coefficients={activeConfig.kernel.values}
+              divisor={activeConfig.kernel.divisor}
+              offset={activeConfig.kernel.offset}
+            />
+          </div>
         </div>
       )}
     </div>

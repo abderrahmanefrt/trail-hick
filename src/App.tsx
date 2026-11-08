@@ -5,6 +5,7 @@ import CarnetModal from '@/components/CarnetModal';
 import HomeHero from '@/components/HomeHero';
 import JeRetiensCard from '@/components/JeRetiensCard';
 import FinalRecapScreen from '@/components/FinalRecapScreen';
+import { useSound } from '@/hooks/useSound';
 
 import Level1 from '@/features/level1/Level1';
 import Level3 from '@/features/level3/Level3';
@@ -22,16 +23,26 @@ import {
 
 const ELEVATION_PER_LEVEL = 250;
 
+const STAGE_SUBTITLES: Record<number, string> = {
+  1: 'LES BASES',
+  2: 'LE CALCUL',
+  3: 'LES POIDS',
+  4: 'DÉTECTION',
+  5: 'EXPÉRIMENTATION',
+};
+
 export default function App(): React.JSX.Element {
   const [progress, setProgress] = useState<TrailKernelProgress>(() => loadProgress());
   const [currentLevelId, setCurrentLevelId] = useState<number>(1);
-  const [view, setView] = useState<'home' | 'trail'>('home');
+  const [view, setView] = useState<'home' | 'trail'>('trail');
   const [isCarnetOpen, setIsCarnetOpen] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(true);
   const [answeredMiniQuestions, setAnsweredMiniQuestions] = useState<
     Record<number, boolean>
   >({});
+
+  const { enabled: soundEnabled, toggle: toggleSound } = useSound();
 
   // Sync state if initial storage loads
   useEffect(() => {
@@ -94,14 +105,16 @@ export default function App(): React.JSX.Element {
   const currentMiniQuestion = T.miniQuestions.find((q) => q.levelId === currentLevelId);
 
   const rankInfo = getRankFromElevation(progress.elevationGainMeters);
+  const stageSubtitle =
+    STAGE_SUBTITLES[currentLevelId] ?? currentLevelData?.difficulty ?? 'ÉTAPE';
 
   return (
-    <div className="min-h-screen bg-stone-100 flex flex-col text-stone-900 font-sans selection:bg-orange-200">
-      {/* Top Alpine Header */}
-      <header className="bg-stone-900 text-stone-100 border-b border-stone-800 shadow-md sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+    <div className="min-h-screen bg-topo-pattern flex flex-col text-stone-900 font-sans selection:bg-orange-200">
+      {/* Top Alpine Header (Dark timber look) */}
+      <header className="bg-[#1c1917] text-stone-100 border-b-2 border-[#5a3215] shadow-md sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
           {/* Logo & title */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setView('home')}
@@ -127,10 +140,10 @@ export default function App(): React.JSX.Element {
           </div>
 
           {/* Gamification Bar & Actions */}
-          <div className="flex items-center gap-2.5 sm:gap-4 text-xs font-mono">
+          <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono">
             {/* Elevation gain badge */}
             <div
-              className="flex items-center gap-1.5 bg-stone-800/90 px-3 py-1.5 rounded-lg border border-stone-700 text-stone-200"
+              className="flex items-center gap-1.5 bg-[#29221b] px-3 py-1.5 rounded-lg border border-[#4d3623] text-stone-200 shadow-xs"
               title="Dénivelé positif accumulé (XP)"
             >
               <span className="text-orange-400 font-bold">▲</span>
@@ -140,7 +153,7 @@ export default function App(): React.JSX.Element {
 
             {/* Rank badge */}
             <div
-              className="hidden md:flex items-center gap-1 bg-stone-800/90 px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 font-sans font-semibold"
+              className="hidden md:flex items-center gap-1.5 bg-[#29221b] px-3 py-1.5 rounded-lg border border-[#4d3623] text-stone-300 font-sans font-semibold shadow-xs"
               title="Votre rang d'alpiniste"
             >
               <span>{rankInfo.badge}</span>
@@ -150,20 +163,35 @@ export default function App(): React.JSX.Element {
             <button
               type="button"
               onClick={() => setIsCarnetOpen(true)}
-              className="px-3 py-1.5 rounded-lg font-sans font-semibold text-xs bg-stone-800 hover:bg-stone-700 text-stone-200 border border-stone-700 transition-colors cursor-pointer flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg font-sans font-semibold text-xs bg-[#29221b] hover:bg-[#3d2f23] text-stone-200 border border-[#4d3623] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
               aria-label="Ouvrir le carnet de rando"
             >
               <span>📓</span>
               <span className="hidden sm:inline">{T.nav.notebook}</span>
             </button>
 
-            {/* Home / Trail Toggle */}
+            {/* Home / Trail Toggle Button */}
             <button
               type="button"
               onClick={() => setView((v) => (v === 'home' ? 'trail' : 'home'))}
-              className="px-3 py-1.5 rounded-lg font-sans font-bold text-xs bg-orange-600 hover:bg-orange-500 text-white transition-colors cursor-pointer"
+              className="px-3 py-1.5 rounded-lg font-sans font-bold text-xs bg-orange-600 hover:bg-orange-500 text-white transition-colors cursor-pointer shadow-xs"
             >
-              {view === 'home' ? 'Sentier (5 étapes) →' : 'Accueil'}
+              {view === 'home' ? 'Sentier →' : 'Accueil'}
+            </button>
+
+            {/* Audio Toggle */}
+            <button
+              type="button"
+              onClick={toggleSound}
+              className={`p-1.5 rounded-lg border text-sm transition-colors cursor-pointer ${
+                soundEnabled
+                  ? 'bg-emerald-800 border-emerald-600 text-emerald-200'
+                  : 'bg-[#29221b] border-[#4d3623] text-stone-400 hover:text-stone-200'
+              }`}
+              title={soundEnabled ? 'Désactiver le son' : 'Activer le son'}
+              aria-label="Contrôle du son"
+            >
+              {soundEnabled ? '🔊' : '🔇'}
             </button>
 
             {/* Reset Button */}
@@ -180,9 +208,9 @@ export default function App(): React.JSX.Element {
         </div>
       </header>
 
-      {/* Progress Trail Bar (Always accessible when in trail view) */}
+      {/* Progress Trail Bar */}
       {view === 'trail' && (
-        <div className="bg-white border-b border-stone-200 shadow-xs">
+        <div className="bg-[#fefaf2]/90 border-b border-[#e2d5bf] shadow-xs backdrop-blur-xs">
           <div className="max-w-6xl mx-auto px-2">
             <ProgressTrail
               stages={stages}
@@ -195,37 +223,60 @@ export default function App(): React.JSX.Element {
 
       {/* Main Content Area */}
       <main className="max-w-5xl mx-auto px-4 py-6 w-full flex-1">
-        {/* Onboarding Guide Box (Always accessible) */}
+        {/* Onboarding Guide Box (Styled as authentic carved wood board with rivets) */}
         {showHowToPlay && (
-          <div className="mb-6 rounded-2xl bg-amber-50/80 border border-amber-300/80 p-4 sm:p-5 shadow-xs space-y-3 relative">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2.5 py-0.5 rounded-md">
-                {T.howToPlay.badge}
-              </span>
+          <div className="mb-6 wood-board rounded-2xl p-4 sm:p-5 text-white relative shadow-lg">
+            {/* Corner rivets */}
+            <span className="wood-rivet absolute top-2.5 left-2.5" />
+            <span className="wood-rivet absolute top-2.5 right-2.5" />
+            <span className="wood-rivet absolute bottom-2.5 left-2.5" />
+            <span className="wood-rivet absolute bottom-2.5 right-2.5" />
+
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#a86e3f]">
+              <div className="flex items-center gap-2">
+                <span className="text-base" aria-hidden="true">
+                  ⚠️
+                </span>
+                <span className="text-xs font-black uppercase tracking-wider text-amber-200">
+                  {T.howToPlay.badge}
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowHowToPlay(false)}
-                className="text-xs text-amber-700 hover:text-amber-950 font-bold px-2 py-0.5 rounded cursor-pointer"
+                className="text-xs text-amber-200 hover:text-white font-bold px-2 py-0.5 rounded cursor-pointer transition-colors"
                 title="Masquer le guide"
               >
                 ✕ Masquer
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-amber-950">
-              <div className="p-3 bg-white/80 rounded-xl border border-amber-200 space-y-1">
-                <p className="font-bold text-amber-900">{T.howToPlay.step1Title}</p>
-                <p className="text-stone-600 leading-relaxed">{T.howToPlay.step1Desc}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-stone-900">
+              <div className="parchment-panel p-3.5 rounded-xl space-y-1.5 shadow-sm">
+                <p className="font-extrabold text-[#7a4115] text-[13px]">
+                  {T.howToPlay.step1Title}
+                </p>
+                <p className="text-stone-700 leading-relaxed text-[11px] sm:text-xs">
+                  {T.howToPlay.step1Desc}
+                </p>
               </div>
 
-              <div className="p-3 bg-white/80 rounded-xl border border-amber-200 space-y-1">
-                <p className="font-bold text-amber-900">{T.howToPlay.step2Title}</p>
-                <p className="text-stone-600 leading-relaxed">{T.howToPlay.step2Desc}</p>
+              <div className="parchment-panel p-3.5 rounded-xl space-y-1.5 shadow-sm">
+                <p className="font-extrabold text-[#7a4115] text-[13px]">
+                  {T.howToPlay.step2Title}
+                </p>
+                <p className="text-stone-700 leading-relaxed text-[11px] sm:text-xs">
+                  {T.howToPlay.step2Desc}
+                </p>
               </div>
 
-              <div className="p-3 bg-white/80 rounded-xl border border-amber-200 space-y-1">
-                <p className="font-bold text-amber-900">{T.howToPlay.step3Title}</p>
-                <p className="text-stone-600 leading-relaxed">{T.howToPlay.step3Desc}</p>
+              <div className="parchment-panel p-3.5 rounded-xl space-y-1.5 shadow-sm">
+                <p className="font-extrabold text-[#7a4115] text-[13px]">
+                  {T.howToPlay.step3Title}
+                </p>
+                <p className="text-stone-700 leading-relaxed text-[11px] sm:text-xs">
+                  {T.howToPlay.step3Desc}
+                </p>
               </div>
             </div>
           </div>
@@ -239,51 +290,62 @@ export default function App(): React.JSX.Element {
           />
         ) : (
           currentLevelData && (
-            <section className="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 sm:p-7 space-y-6">
-              {/* Level header */}
-              <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-stone-100">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-md">
-                      Refuge {currentLevelData.id} / {T.levels.length} —{' '}
-                      {currentLevelData.difficulty}
+            <section className="bg-white rounded-3xl border border-[#ded0b4] shadow-md p-5 sm:p-7 space-y-6">
+              {/* Level Header */}
+              <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-stone-200">
+                <div className="space-y-2 max-w-2xl">
+                  {/* Step badges */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-block text-[11px] font-extrabold uppercase tracking-wider text-orange-800 bg-orange-100 px-3 py-1 rounded-full border border-orange-200">
+                      ÉTAPE {currentLevelData.id} / {T.levels.length} — {stageSubtitle}
                     </span>
-                    <span className="text-[11px] font-mono text-stone-500 font-bold">
+                    <span className="text-[11px] font-mono font-bold text-stone-600 bg-stone-100 px-2.5 py-1 rounded-full border border-stone-200">
                       +{ELEVATION_PER_LEVEL} m D+
                     </span>
+                    {isCurrentComplete && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
+                        <span>✓</span>
+                        <span>Étape validée</span>
+                      </span>
+                    )}
                   </div>
 
-                  <h2 className="text-2xl sm:text-3xl font-black text-stone-800 tracking-tight">
+                  {/* Title & Objective */}
+                  <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-snug">
                     {currentLevelData.title}
                   </h2>
-                  <p className="text-xs sm:text-sm text-stone-500 font-medium">
-                    Objectif : {currentLevelData.objective}
+                  <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed">
+                    {currentLevelData.objective}
                   </p>
 
-                  {/* Explicit Mission Instruction */}
-                  <div className="mt-2 p-2.5 rounded-xl bg-orange-50 border border-orange-200 text-xs font-bold text-orange-950 flex items-center gap-2">
-                    <span>👉</span>
-                    <span>{currentLevelData.instructions}</span>
+                  {/* Mission Ribbon Banner */}
+                  <div className="mission-ribbon mt-3 p-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5">
+                    <span className="text-base shrink-0" aria-hidden="true">
+                      ⏱️
+                    </span>
+                    <span className="tracking-wide">
+                      VOTRE MISSION : {currentLevelData.instructions}
+                    </span>
+                    <span className="text-base shrink-0 ml-auto" aria-hidden="true">
+                      🔭
+                    </span>
                   </div>
                 </div>
-
-                {isCurrentComplete && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-green-50 border border-green-200 text-green-800 text-xs font-bold shadow-xs">
-                    <span>✓</span>
-                    <span>{T.level.complete}</span>
-                  </div>
-                )}
               </div>
 
               {/* Success celebration banner */}
               {isCurrentComplete && currentLevelData.successMessage && (
-                <div className="rounded-xl bg-green-50 border border-green-300 p-4 text-xs sm:text-sm font-medium text-green-900 flex items-center gap-2.5 shadow-xs">
-                  <span className="text-xl shrink-0" role="img" aria-hidden="true">
-                    🎉
+                <div className="success-banner rounded-2xl p-4 text-xs sm:text-sm font-semibold text-emerald-950 flex items-center gap-3">
+                  <span className="text-2xl shrink-0" role="img" aria-label="Succès">
+                    🌿
                   </span>
-                  <div>
-                    <strong>{T.level.success}</strong> {currentLevelData.successMessage}
+                  <div className="flex-1">
+                    <strong>Objectif atteint ! Bravo !</strong>{' '}
+                    {currentLevelData.successMessage}
                   </div>
+                  <span className="text-2xl shrink-0" role="img" aria-hidden="true">
+                    ⭐
+                  </span>
                 </div>
               )}
 
@@ -306,7 +368,7 @@ export default function App(): React.JSX.Element {
                 )}
               </div>
 
-              {/* "Je retiens" Card + Mini Question (appears when level objective is achieved) */}
+              {/* "Je retiens" Card + Mini Question */}
               {isCurrentComplete && currentRecapCard && currentMiniQuestion && (
                 <JeRetiensCard
                   card={currentRecapCard}
@@ -331,14 +393,14 @@ export default function App(): React.JSX.Element {
 
               {/* Next Level navigation button */}
               {hasNext && isCurrentComplete && (
-                <div className="pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="pt-5 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                   {!isQuestionAnswered ? (
-                    <p className="text-xs text-amber-800 font-semibold bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
+                    <p className="text-xs text-amber-900 font-bold bg-amber-100/90 px-3 py-2 rounded-xl border border-amber-300">
                       ⚠️ Répondez à la mini-question ci-dessus pour débloquer l'étape
                       suivante !
                     </p>
                   ) : (
-                    <span className="text-xs text-green-700 font-bold flex items-center gap-1.5">
+                    <span className="text-xs text-emerald-800 font-extrabold flex items-center gap-1.5">
                       <span>✓</span>
                       <span>Idée validée, en route pour le refuge suivant !</span>
                     </span>
@@ -348,9 +410,9 @@ export default function App(): React.JSX.Element {
                     type="button"
                     disabled={!canGoNext}
                     onClick={() => setCurrentLevelId(nextLevelId)}
-                    className="px-6 py-3 rounded-xl font-bold text-sm bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md transition-all cursor-pointer flex items-center gap-2 transform active:scale-95"
+                    className="w-full sm:w-auto px-7 py-3 rounded-xl font-black text-sm bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-95"
                   >
-                    <span>{T.level.next}</span>
+                    <span>Passer à l'étape suivante →</span>
                   </button>
                 </div>
               )}
@@ -360,22 +422,22 @@ export default function App(): React.JSX.Element {
       </main>
 
       {/* Footer */}
-      <footer className="text-center py-5 px-4 text-xs text-stone-500 border-t border-stone-200 bg-stone-50">
+      <footer className="text-center py-5 px-4 text-xs text-stone-600 border-t border-[#ded0b4] bg-[#fbf7ee]">
         <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          <span>TrailKernel — Le parcours d'Amine en 5 étapes clés</span>
+          <span>TrailKernel — L'art de la convolution en haute montagne</span>
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setIsCarnetOpen(true)}
-              className="text-stone-600 hover:text-stone-900 underline cursor-pointer"
+              className="text-stone-700 hover:text-stone-900 underline font-medium cursor-pointer"
             >
-              Fiches de terrain
+              Carnet de rando
             </button>
             <span>•</span>
             <button
               type="button"
               onClick={() => setView('home')}
-              className="text-stone-600 hover:text-stone-900 underline cursor-pointer"
+              className="text-stone-700 hover:text-stone-900 underline font-medium cursor-pointer"
             >
               Accueil
             </button>
