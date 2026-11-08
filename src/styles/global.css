@@ -5,11 +5,6 @@
     --color-forest-500: #2d7d32;
     --color-rock-500: #57534e;
     --color-sunset-500: #ea580c;
-    --wood-border: #7c4822;
-    --wood-bg: #8d5329;
-    --wood-dark: #623616;
-    --parchment-bg: #fdf8ed;
-    --parchment-border: #e8dbbf;
     color-scheme: light;
   }
   * {
@@ -42,66 +37,104 @@
   }
 }
 
-/* Authentic Topographic Contour Lines Background Pattern */
-.bg-topo-pattern {
-  background-color: #faf6ee;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M0 20 Q 30 5, 60 25 T 120 20 M0 45 Q 40 30, 80 50 T 120 40 M0 75 Q 30 90, 70 70 T 120 85 M0 100 Q 50 115, 90 95 T 120 110 M20 0 Q 35 30, 20 60 T 30 120 M70 0 Q 85 40, 75 80 T 80 120' fill='none' stroke='%238a7960' stroke-width='0.7' stroke-opacity='0.12'/%3E%3C/svg%3E");
+/* Background with Topographic Contours and Side Mountain / Pine Sketches */
+.bg-topo-mountain-theme {
+  background-color: #fbf7ef;
+  background-image:
+    /* Left side pine & mountain silhouette watermark */
+    radial-gradient(ellipse at 2% 50%, rgba(180, 165, 140, 0.15) 0%, transparent 40%),
+    /* Right side mountain silhouette watermark */
+    radial-gradient(ellipse at 98% 60%, rgba(180, 165, 140, 0.15) 0%, transparent 40%),
+    /* Topographic contour lines pattern */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M0 25 Q 40 10, 80 30 T 160 25 M0 55 Q 50 40, 100 60 T 160 50 M0 95 Q 40 110, 90 85 T 160 105 M0 135 Q 60 150, 110 125 T 160 140 M25 0 Q 40 40, 25 80 T 35 160 M85 0 Q 105 50, 95 100 T 100 160 M140 0 Q 155 45, 145 90 T 150 160' fill='none' stroke='%239e8c72' stroke-width='0.75' stroke-opacity='0.16'/%3E%3C/svg%3E");
   background-repeat: repeat;
+  background-attachment: fixed;
 }
 
-/* Wood Signboard Theme */
-.wood-board {
-  background: linear-gradient(180deg, #965b2f 0%, #7e4a23 100%);
-  border: 4px solid #5a3215;
+/* Authentic Carved Wood Signboard */
+.wood-board-panel {
+  background: linear-gradient(180deg, #9b5a2b 0%, #7e451d 100%);
+  border: 4px solid #542b10;
+  border-radius: 18px;
   box-shadow:
-    0 8px 20px -4px rgba(78, 38, 12, 0.35),
+    0 10px 24px -4px rgba(70, 32, 8, 0.4),
     inset 0 2px 2px rgba(255, 255, 255, 0.25),
-    inset 0 -3px 3px rgba(0, 0, 0, 0.35);
+    inset 0 -3px 4px rgba(0, 0, 0, 0.4);
 }
 
-.wood-sign-plate {
-  background: linear-gradient(180deg, #aa6a37 0%, #875127 100%);
-  border: 2px solid #5e3516;
+/* Wood Sign Planks */
+.wood-plank-brown {
+  background: linear-gradient(180deg, #a76533 0%, #834a20 100%);
+  border: 2px solid #582e11;
   box-shadow:
-    0 4px 10px rgba(60, 28, 8, 0.25),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    0 4px 10px rgba(55, 25, 7, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
-.wood-frame {
-  border: 6px solid #6c3b17;
+.wood-plank-green {
+  background: linear-gradient(180deg, #877a45 0%, #685d30 100%);
+  border: 2px solid #48401e;
   box-shadow:
-    0 6px 16px rgba(45, 22, 7, 0.35),
-    inset 0 2px 4px rgba(0, 0, 0, 0.4);
+    0 4px 10px rgba(40, 35, 12, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
 }
 
-.wood-rivet {
+/* Metallic Slate Bezel for Gauge */
+.metal-bezel-panel {
+  background: linear-gradient(180deg, #6c7782 0%, #4e5760 100%);
+  border: 2px solid #373f47;
+  box-shadow:
+    0 6px 14px rgba(30, 36, 42, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+}
+
+/* Wooden Picture Frame for Canvas */
+.map-wood-frame {
+  border: 6px solid #8a4e22;
+  box-shadow:
+    0 6px 16px rgba(50, 25, 8, 0.3),
+    inset 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+
+/* Screw Rivets */
+.screw-rivet-gold {
   width: 7px;
   height: 7px;
   border-radius: 9999px;
-  background: radial-gradient(circle at 30% 30%, #ecd79c, #7a5823);
+  background: radial-gradient(circle at 35% 35%, #fff0b3, #8c6820);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0.5px rgba(255, 255, 255, 0.6);
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.7);
 }
 
-/* Parchment inner panels */
-.parchment-panel {
-  background-color: #fef9ed;
-  border: 1.5px solid #ded0b4;
-  box-shadow: inset 0 1px 3px rgba(120, 90, 50, 0.08);
+.screw-rivet-silver {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #f1f5f9, #475569);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.7);
+}
+
+/* Parchment inner boxes */
+.parchment-box {
+  background: #fdf7eb;
+  border: 1.5px solid #dfcfb0;
+  box-shadow: inset 0 1px 2px rgba(120, 90, 50, 0.06);
 }
 
 /* Mission Ribbon */
-.mission-ribbon {
-  background: linear-gradient(90deg, #9c592a 0%, #b26832 50%, #9c592a 100%);
-  border: 1.5px solid #6b3915;
+.mission-ribbon-tag {
+  background: linear-gradient(90deg, #995526 0%, #b86b33 50%, #995526 100%);
+  border: 1.5px solid #6b3713;
   color: #fff9ee;
-  box-shadow: 0 3px 8px rgba(90, 45, 15, 0.25);
+  box-shadow: 0 3px 8px rgba(80, 40, 10, 0.25);
 }
 
-/* Success Laurel Banner */
-.success-banner {
-  background: linear-gradient(90deg, #ecf8ec 0%, #f3fbf2 100%);
-  border: 1.5px solid #a3d99e;
-  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.1);
+/* Laurel Success Banner */
+.success-laurel-banner {
+  background: linear-gradient(90deg, #eef9ee 0%, #f4fbf3 100%);
+  border: 2px solid #a3d99e;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.12);
 }

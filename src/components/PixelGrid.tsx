@@ -57,20 +57,26 @@ export default function PixelGrid({
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
       {allowColorToggle && !initialColorMode && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-start pb-1">
           <button
             type="button"
             onClick={togglePalette}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-stone-200/80 hover:bg-stone-300 text-stone-700 transition-colors cursor-pointer border border-stone-300"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#faf6ee] hover:bg-[#f3ece0] text-stone-700 transition-colors cursor-pointer border border-[#d8cbb5] shadow-xs"
             aria-pressed={activeColorMode === 'topo'}
           >
-            <span>{activeColorMode === 'topo' ? '🗺️' : '⬛'}</span>
+            <span
+              className={`w-3.5 h-3.5 rounded-sm border ${
+                activeColorMode === 'topo'
+                  ? 'bg-blue-600 border-blue-700 shadow-xs'
+                  : 'bg-stone-600 border-stone-700'
+              }`}
+            />
             <span>{T.contours.toggle}</span>
           </button>
         </div>
       )}
 
-      <div className="overflow-auto max-w-full rounded-lg border border-stone-300 bg-stone-900/5 p-1 shadow-inner">
+      <div className="overflow-auto max-w-full rounded-xl border border-[#d6c7af] bg-stone-900/5 p-1 shadow-inner">
         <canvas
           ref={canvasRef}
           onClick={handleClick}

@@ -109,9 +109,9 @@ export default function App(): React.JSX.Element {
     STAGE_SUBTITLES[currentLevelId] ?? currentLevelData?.difficulty ?? 'ÉTAPE';
 
   return (
-    <div className="min-h-screen bg-topo-pattern flex flex-col text-stone-900 font-sans selection:bg-orange-200">
+    <div className="min-h-screen bg-topo-mountain-theme flex flex-col text-stone-900 font-sans selection:bg-orange-200">
       {/* Top Alpine Header (Dark timber look) */}
-      <header className="bg-[#1c1917] text-stone-100 border-b-2 border-[#5a3215] shadow-md sticky top-0 z-40">
+      <header className="bg-[#1f1a16] text-stone-100 border-b-2 border-[#472c18] shadow-md sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
           {/* Logo & title */}
           <div className="flex items-center gap-2.5">
@@ -143,7 +143,7 @@ export default function App(): React.JSX.Element {
           <div className="flex items-center gap-2 sm:gap-3 text-xs font-mono">
             {/* Elevation gain badge */}
             <div
-              className="flex items-center gap-1.5 bg-[#29221b] px-3 py-1.5 rounded-lg border border-[#4d3623] text-stone-200 shadow-xs"
+              className="flex items-center gap-1.5 bg-[#2c221a] px-3 py-1.5 rounded-lg border border-[#4d3828] text-stone-200 shadow-xs"
               title="Dénivelé positif accumulé (XP)"
             >
               <span className="text-orange-400 font-bold">▲</span>
@@ -153,7 +153,7 @@ export default function App(): React.JSX.Element {
 
             {/* Rank badge */}
             <div
-              className="hidden md:flex items-center gap-1.5 bg-[#29221b] px-3 py-1.5 rounded-lg border border-[#4d3623] text-stone-300 font-sans font-semibold shadow-xs"
+              className="hidden md:flex items-center gap-1.5 bg-[#2c221a] px-3 py-1.5 rounded-lg border border-[#4d3828] text-stone-300 font-sans font-semibold shadow-xs"
               title="Votre rang d'alpiniste"
             >
               <span>{rankInfo.badge}</span>
@@ -163,7 +163,7 @@ export default function App(): React.JSX.Element {
             <button
               type="button"
               onClick={() => setIsCarnetOpen(true)}
-              className="px-3 py-1.5 rounded-lg font-sans font-semibold text-xs bg-[#29221b] hover:bg-[#3d2f23] text-stone-200 border border-[#4d3623] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+              className="px-3 py-1.5 rounded-lg font-sans font-semibold text-xs bg-[#2c221a] hover:bg-[#3d2e23] text-stone-200 border border-[#4d3828] transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
               aria-label="Ouvrir le carnet de rando"
             >
               <span>📓</span>
@@ -186,7 +186,7 @@ export default function App(): React.JSX.Element {
               className={`p-1.5 rounded-lg border text-sm transition-colors cursor-pointer ${
                 soundEnabled
                   ? 'bg-emerald-800 border-emerald-600 text-emerald-200'
-                  : 'bg-[#29221b] border-[#4d3623] text-stone-400 hover:text-stone-200'
+                  : 'bg-[#2c221a] border-[#4d3828] text-stone-400 hover:text-stone-200'
               }`}
               title={soundEnabled ? 'Désactiver le son' : 'Activer le son'}
               aria-label="Contrôle du son"
@@ -208,9 +208,9 @@ export default function App(): React.JSX.Element {
         </div>
       </header>
 
-      {/* Progress Trail Bar */}
+      {/* Progress Trail Stepper Bar */}
       {view === 'trail' && (
-        <div className="bg-[#fefaf2]/90 border-b border-[#e2d5bf] shadow-xs backdrop-blur-xs">
+        <div className="bg-[#fcf8f0]/95 border-b border-[#e2d5bf] shadow-xs backdrop-blur-xs">
           <div className="max-w-6xl mx-auto px-2">
             <ProgressTrail
               stages={stages}
@@ -223,18 +223,19 @@ export default function App(): React.JSX.Element {
 
       {/* Main Content Area */}
       <main className="max-w-5xl mx-auto px-4 py-6 w-full flex-1">
-        {/* Onboarding Guide Box (Styled as authentic carved wood board with rivets) */}
+        {/* Onboarding Guide Box (Authentic Carved Wood Park Signboard) */}
         {showHowToPlay && (
-          <div className="mb-6 wood-board rounded-2xl p-4 sm:p-5 text-white relative shadow-lg">
-            {/* Corner rivets */}
-            <span className="wood-rivet absolute top-2.5 left-2.5" />
-            <span className="wood-rivet absolute top-2.5 right-2.5" />
-            <span className="wood-rivet absolute bottom-2.5 left-2.5" />
-            <span className="wood-rivet absolute bottom-2.5 right-2.5" />
+          <div className="mb-6 wood-board-panel p-4 sm:p-5 text-white relative shadow-lg">
+            {/* 4 Corner Screw Rivets */}
+            <span className="screw-rivet-gold absolute top-2.5 left-2.5" />
+            <span className="screw-rivet-gold absolute top-2.5 right-2.5" />
+            <span className="screw-rivet-gold absolute bottom-2.5 left-2.5" />
+            <span className="screw-rivet-gold absolute bottom-2.5 right-2.5" />
 
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#a86e3f]">
-              <div className="flex items-center gap-2">
-                <span className="text-base" aria-hidden="true">
+            {/* Top header row */}
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#a86e3f]/60">
+              <div className="flex items-center gap-2 pl-2">
+                <span className="text-base text-amber-300" aria-hidden="true">
                   ⚠️
                 </span>
                 <span className="text-xs font-black uppercase tracking-wider text-amber-200">
@@ -244,16 +245,17 @@ export default function App(): React.JSX.Element {
               <button
                 type="button"
                 onClick={() => setShowHowToPlay(false)}
-                className="text-xs text-amber-200 hover:text-white font-bold px-2 py-0.5 rounded cursor-pointer transition-colors"
+                className="text-xs text-amber-200 hover:text-white font-bold px-2.5 py-1 rounded cursor-pointer transition-colors"
                 title="Masquer le guide"
               >
                 ✕ Masquer
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-stone-900">
-              <div className="parchment-panel p-3.5 rounded-xl space-y-1.5 shadow-sm">
-                <p className="font-extrabold text-[#7a4115] text-[13px]">
+            {/* 3 Parchment Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs text-stone-900">
+              <div className="parchment-box p-3.5 rounded-xl space-y-1.5 shadow-xs">
+                <p className="font-black text-[#7a4115] text-[13px]">
                   {T.howToPlay.step1Title}
                 </p>
                 <p className="text-stone-700 leading-relaxed text-[11px] sm:text-xs">
@@ -261,8 +263,8 @@ export default function App(): React.JSX.Element {
                 </p>
               </div>
 
-              <div className="parchment-panel p-3.5 rounded-xl space-y-1.5 shadow-sm">
-                <p className="font-extrabold text-[#7a4115] text-[13px]">
+              <div className="parchment-box p-3.5 rounded-xl space-y-1.5 shadow-xs">
+                <p className="font-black text-[#7a4115] text-[13px]">
                   {T.howToPlay.step2Title}
                 </p>
                 <p className="text-stone-700 leading-relaxed text-[11px] sm:text-xs">
@@ -270,8 +272,8 @@ export default function App(): React.JSX.Element {
                 </p>
               </div>
 
-              <div className="parchment-panel p-3.5 rounded-xl space-y-1.5 shadow-sm">
-                <p className="font-extrabold text-[#7a4115] text-[13px]">
+              <div className="parchment-box p-3.5 rounded-xl space-y-1.5 shadow-xs">
+                <p className="font-black text-[#7a4115] text-[13px]">
                   {T.howToPlay.step3Title}
                 </p>
                 <p className="text-stone-700 leading-relaxed text-[11px] sm:text-xs">
@@ -290,53 +292,54 @@ export default function App(): React.JSX.Element {
           />
         ) : (
           currentLevelData && (
-            <section className="bg-white rounded-3xl border border-[#ded0b4] shadow-md p-5 sm:p-7 space-y-6">
+            <section className="bg-white rounded-3xl border border-[#ded0b4] shadow-md p-5 sm:p-8 space-y-6">
               {/* Level Header */}
-              <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-stone-200">
-                <div className="space-y-2 max-w-2xl">
-                  {/* Step badges */}
+              <div className="space-y-3 pb-4 border-b border-stone-200">
+                {/* Step badges row */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="inline-block text-[11px] font-extrabold uppercase tracking-wider text-orange-800 bg-orange-100 px-3 py-1 rounded-full border border-orange-200">
+                    <span className="inline-block text-[11px] font-black uppercase tracking-wider text-orange-800 bg-orange-100 px-3 py-1 rounded-full border border-orange-200">
                       ÉTAPE {currentLevelData.id} / {T.levels.length} — {stageSubtitle}
                     </span>
                     <span className="text-[11px] font-mono font-bold text-stone-600 bg-stone-100 px-2.5 py-1 rounded-full border border-stone-200">
-                      +{ELEVATION_PER_LEVEL} m D+
-                    </span>
-                    {isCurrentComplete && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
-                        <span>✓</span>
-                        <span>Étape validée</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Title & Objective */}
-                  <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-snug">
-                    {currentLevelData.title}
-                  </h2>
-                  <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed">
-                    {currentLevelData.objective}
-                  </p>
-
-                  {/* Mission Ribbon Banner */}
-                  <div className="mission-ribbon mt-3 p-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5">
-                    <span className="text-base shrink-0" aria-hidden="true">
-                      ⏱️
-                    </span>
-                    <span className="tracking-wide">
-                      VOTRE MISSION : {currentLevelData.instructions}
-                    </span>
-                    <span className="text-base shrink-0 ml-auto" aria-hidden="true">
-                      🔭
+                      &lt; {ELEVATION_PER_LEVEL} m D+
                     </span>
                   </div>
+
+                  {isCurrentComplete && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">
+                      <span>✓</span>
+                      <span>Étape validée</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Title & Objective */}
+                <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-snug">
+                  {currentLevelData.title}
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-600 font-medium leading-relaxed">
+                  {currentLevelData.objective}
+                </p>
+
+                {/* Mission Ribbon Banner (Outdoor wooden banner with stopwatch & binoculars) */}
+                <div className="mission-ribbon-tag mt-3 p-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5">
+                  <span className="text-base shrink-0" aria-hidden="true">
+                    ⏱️
+                  </span>
+                  <span className="tracking-wide flex-1">
+                    VOTRE MISSION : {currentLevelData.instructions}
+                  </span>
+                  <span className="text-base shrink-0" aria-hidden="true">
+                    🔭
+                  </span>
                 </div>
               </div>
 
-              {/* Success celebration banner */}
+              {/* Laurel Success Banner */}
               {isCurrentComplete && currentLevelData.successMessage && (
-                <div className="success-banner rounded-2xl p-4 text-xs sm:text-sm font-semibold text-emerald-950 flex items-center gap-3">
-                  <span className="text-2xl shrink-0" role="img" aria-label="Succès">
+                <div className="success-laurel-banner rounded-2xl p-4 text-xs sm:text-sm font-semibold text-emerald-950 flex items-center gap-3">
+                  <span className="text-2xl shrink-0" role="img" aria-label="Laurier">
                     🌿
                   </span>
                   <div className="flex-1">
@@ -393,9 +396,9 @@ export default function App(): React.JSX.Element {
 
               {/* Next Level navigation button */}
               {hasNext && isCurrentComplete && (
-                <div className="pt-5 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-6 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                   {!isQuestionAnswered ? (
-                    <p className="text-xs text-amber-900 font-bold bg-amber-100/90 px-3 py-2 rounded-xl border border-amber-300">
+                    <p className="text-xs text-amber-900 font-bold bg-amber-100/90 px-3.5 py-2 rounded-xl border border-amber-300">
                       ⚠️ Répondez à la mini-question ci-dessus pour débloquer l'étape
                       suivante !
                     </p>
@@ -410,7 +413,7 @@ export default function App(): React.JSX.Element {
                     type="button"
                     disabled={!canGoNext}
                     onClick={() => setCurrentLevelId(nextLevelId)}
-                    className="w-full sm:w-auto px-7 py-3 rounded-xl font-black text-sm bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-95"
+                    className="w-full sm:w-auto px-7 py-3 rounded-xl font-black text-sm bg-orange-600 hover:bg-orange-500 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-95 ml-auto"
                   >
                     <span>Passer à l'étape suivante →</span>
                   </button>
