@@ -1,163 +1,77 @@
-# 🏔️ TrailKernel — La Convolution d'Image en Haute Montagne
+# 🏔️ TRAILVISION — Explore Nature. Discover How Machines See.
 
-**TrailKernel** est une application web éducative interactive conçue pour apprendre et comprendre la **convolution d'image sans aucun prérequis mathématique**, à travers le thème ludique de la randonnée en montagne.
+**TRAILVISION** is an interactive, cinematic adventure-themed educational web application designed to teach visitors how **Computer Vision Convolution** works—without ever mentioning technical mathematical jargon until the final revelation!
 
-> **Principe fondamental** : Le thème de la montagne sert l'explication sans la déformer. Tous les calculs matriciels restent transparents, visibles et vérifiables en direct.
-
----
-
-## 💡 Comprendre la Convolution en 1 Minute Chrono
-
-Imaginez que vous observez un paysage de montagne vu du ciel :
-
-1. **Une image en noir et blanc = une carte d'altitude** :
-   - Chaque case (pixel) contient un nombre entre **0** et **255**.
-   - `0` = un lac ou une vallée sombre.
-   - `128` = un alpage ou une pente moyenne.
-   - `255` = un sommet rocheux enneigé et éclatant.
-
-2. **La convolution = une loupe 3×3 qui avance pas à pas** :
-   - À chaque pas, le marcheur regarde **les 9 cases sous sa loupe** (ses 8 voisins immédiats et ses propres pieds).
-   - Il multiplie chaque altitude par le chiffre écrit sur son filtre (les coefficients).
-   - Il additionne les 9 résultats et divise par le total pour obtenir la nouvelle altitude.
-
-3. **À quoi ça sert concrètement ?**
-   - **Pour gommer le bruit (flou / brouillard)** : on fait la moyenne des 9 voisins $\rightarrow$ l'image devient douce et lissée.
-   - **Pour détecter les falaises (contours / Sobel)** : on compare les voisins de gauche et de droite $\rightarrow$ dès que l'altitude change brutalement, la falaise s'allume en rouge vif !
+Visitors become alpine explorers traveling across four seasonal wilderness environments. Each season disguises a fundamental computer vision operation as an engaging outdoor activity. Only after completing all four missions does the dramatic truth get revealed: **“You have just discovered how CONVOLUTION works!”**
 
 ---
 
-## 🎮 Guide Pratique : Comment Jouer aux 5 Niveaux Essentiels
+## 🗺️ The Four Seasonal Missions & Their Hidden Science
 
-Le parcours est concentré sur **5 étapes indispensables**, progressives et très simples à prendre en main :
-
-### 🗺️ Étape 1 : Lire la carte (Pixel = Altitude)
-* **Ce qu'on apprend** : Une image numérique est simplement une grille de nombres de 0 à 255.
-* **Ce que vous faites à l'écran** :
-  1. Cliquez avec votre souris sur **6 cases différentes** de la carte.
-  2. Regardez l'altimètre à droite afficher l'altitude exacte du point (ex: `192 / 255 m`).
-  3. *(Optionnel)* Activez le son en haut à droite : le ton monte dans les aigus quand vous cliquez sur un sommet !
-* **Condition de réussite** : Explorer 6 cases. Le bouton orange *« Passer à l'étape suivante → »* se débloque.
+| Season & Mission | Color & Atmosphere | Disguised Outdoor Activity | Real Computer Vision Principle |
+| :--- | :--- | :--- | :--- |
+| **🌸 SPRING**<br>*The Flower Hunter* | Sage Green (`#79A98A`)<br>Blooming alpine forest & sunlight | **Interactive Scanning Lens**: Move a magnifying reticle across the forest to detect matching wildflower geometries. | **Pattern Recognition & Feature Extraction**:<br>Local cross-correlation filters scanning an image for specific geometric signatures. |
+| **☀️ SUMMER**<br>*The Sunlight Explorer* | Warm Orange (`#FFB347`)<br>Canyon trail, turquoise water & solar glare | **Time-of-Day Simulator & Sensor**: Shift the sun from dawn to night; inspect numerical matrix values from 0 to 255. | **Pixel Intensity & Digital Quantization**:<br>Digital images as numerical brightness matrices where 0 is shadow and 255 is blinding solar glare. |
+| **🍂 FALL**<br>*The Hidden Trail* | Burnt Orange (`#B86B3D`)<br>Autumn ridges, crimson leaves & hidden trails | **3-Way Vision Modes**: Switch between Normal, Boundary, and Enhanced Vision to follow trail cairns buried under leaves. | **Edge Detection & Sobel Gradients**:<br>Horizontal and vertical derivative operators highlighting abrupt brightness transitions along contours. |
+| **❄️ WINTER**<br>*The Frozen Vision* | Icy Blue (`#6286A8`)<br>Snowy mountain peak & swirling blizzard | **Alpine Goggle Filter**: Adjust neighbor-averaging blur to pierce through snow grain and locate the refuge beacon. | **Spatial Smoothing & Kernel Normalization**:<br>Weighted neighborhood averages that eliminate random noise while avoiding whiteout saturation. |
 
 ---
 
-### 🔭 Étape 2 : La fenêtre 3×3 (Le Cœur du Calcul)
-* **Ce qu'on apprend** : Comment la convolution calcule un nouveau pixel en faisant la moyenne pondérée de ses 9 voisins.
-* **Ce que vous faites à l'écran** :
-  1. Cliquez sur une case de la grille 6×6 pour y poser le randonneur.
-  2. Un carré orange 3×3 apparaît sur la carte : c'est la vue du marcheur.
-  3. À droite, le tableau vous montre en direct les 9 multiplications et la division par 9.
-  4. Cliquez sur le bouton orange **« ✓ Valider le calcul pour la case (x, y) »**.
-* **Condition de réussite** : Répéter l'action sur **4 cases différentes**.
+## 🤖 Animated Hiking Companion: TRAILBOT
+
+A friendly, expressive alpine explorer who accompanies visitors with contextual guidance, humorous hiking observations, and hints—while never breaking the educational immersion:
+- **Spring**: Wears a wildflower pinned to his botanical expedition hat.
+- **Summer**: Sports polarized reflective sunglasses and safari visor.
+- **Fall**: Wears a cozy checked knit autumn scarf.
+- **Winter**: Dons a thermal beanie, snow goggles, and an alpine parka.
 
 ---
 
-### ⚖️ Étape 3 : Flou, Poids & Saturation
-* **Ce qu'on apprend** : La différence entre flou uniforme et flou gaussien, et pourquoi la division est vitale pour éviter l'éblouissement.
-* **Ce que vous faites à l'écran** :
-  1. Cliquez sur les 3 boutons de comparaison :
-     - *« 🌫️ Brouillard (Box Blur /9) »*
-     - *« 🌥️ Brume légère (Gaussien /16) »*
-     - *« ⚠️ Sans division (diviseur = 1) »* $\rightarrow$ observez l'image devenir toute blanche (saturation à 255).
-  2. Répondez aux 3 questions du mini-quiz en bas :
-     - **Question 1** : Choisissez **« Identique »** (la moyenne d'une zone plate ne change pas).
-     - **Question 2** : Choisissez **« Saturation à 255 (tout blanc) »** (sans division, la somme explose).
-     - **Question 3** : Choisissez **« Le centre pèse 4/16 (25%) »** (le centre a plus d'importance).
-* **Condition de réussite** : Obtenir 3 réponses vertes au quiz.
+## 🔬 The Grand Revelation & Interactive Kernel Laboratory
+
+Unlocked only after all 4 seasonal badges are earned:
+1. **Dramatic Cinematic Reveal**:
+   - *“YOU’VE BEEN SEEING THE WORLD DIFFERENTLY…”*
+   - *“YOU HAVE JUST DISCOVERED CONVOLUTION!”*
+2. **The 4-Way Conceptual Synthesis**: Connects every season to its role in modern artificial intelligence, self-driving cars, drone mountain search-and-rescue, and satellite imaging.
+3. **Interactive 3×3 Kernel Laboratory**:
+   - Live pixel convolution running directly on HTML5 Canvas.
+   - Presets for **Box Blur**, **Gaussian Smoothing**, **Sobel Ridge Detection**, **Sharpening**, and **3D Hillshade Emboss**.
+   - **Custom Kernel Editor**: Modify any of the 9 numbers or divisor and watch the image transform in real-time.
 
 ---
 
-### 📐 Étape 4 : Détecter les Falaises (Sobel & Pente)
-* **Ce qu'on apprend** : Comment le filtre de Sobel calcule la raideur du sol (gradient) et cartographie le risque d'avalanche.
-* **Ce que vous faites à l'écran** :
-  1. Observez la décomposition des pentes Est-Ouest (Sobel X) et Nord-Sud (Sobel Y).
-  2. Regardez la grande carte de difficulté en bas :
-     - 🟢 **Vert** = pente douce (marche facile)
-     - 🟡 **Jaune** = pente moyenne
-     - 🟠 **Orange** = pente raide
-     - 🔴 **Rouge vif** = falaise abrupte / à-pic
-  3. **Cliquez directement sur la zone rouge vif** au centre du massif.
-* **Condition de réussite** : Toucher la falaise la plus abrupte avec le pointeur.
+## 🛠️ Tech Stack & Architecture
+
+- **UI Framework**: React 19 + TypeScript 5.7 (strict mode)
+- **Bundler**: Vite 6
+- **Styling**: Tailwind CSS 4 + Seasonal Design Tokens
+- **Graphic Processing**: Native HTML5 Canvas 2D (`ImageData` buffer manipulation for genuine mathematical convolution)
+- **Audio Synthesis**: Pure Web Audio API oscillators (altimeter pitch tones & milestone chimes without external audio files)
+- **Particle System**: Lightweight seasonal canvas engine (spring petals, summer shimmer, fall leaves, winter snowflakes)
+- **Storage**: Safe `localStorage` progress tracking with versioning and reset capability
 
 ---
 
-### 🛠️ Étape 5 : L'Atelier Libre du Cartographe
-* **Ce qu'on apprend** : Manipuler tous les filtres comme de véritables outils de cartographie ou concevoir son propre masque 3×3.
-* **Ce que vous faites à l'écran** :
-  1. Cliquez sur **3 filtres différents** dans la barre d'outils (par exemple : *« Brouillard »*, puis *« Crêtes & falaises »*, puis *« Ombrage du relief »*).
-  2. Observez la carte de droite se métamorphoser instantanément.
-  3. *(Optionnel)* Cliquez sur *« ✏️ Personnalisé »* pour modifier vous-même les 9 chiffres du noyau et observer le résultat en direct !
-* **Condition de réussite** : Tester 3 filtres. Vous obtenez alors le rang suprême de **Guide de Haute Montagne** !
+## 🚀 Running the Project Locally
 
----
-
-## 🎒 Gamification & Carnet de Rando
-
-- **Cartes mémo « Je retiens » & Mini-questions** : À la fin de chaque étape, Amine débloque une carte résumé simple avec animation sobre, puis répond à une mini-question pour valider l'acquisition de la notion avant de poursuivre.
-- **Écran récapitulatif final** : À la fin du niveau 5, un bilan illustré « Ce que tu sais maintenant » rassemble les 5 cartes clés dans l'ordre.
-- **Progression en Dénivelé Positif (D+)** : Chaque étape franchie rapporte +250 m D+ pour atteindre 1 250 m D+.
-- **Rangs d'alpiniste** :
-  - 🌲 *Marcheur Initié* (0 – 299 m D+)
-  - 🥾 *Randonneur Aguerri* (300 – 699 m D+)
-  - 🧗 *Alpiniste Chevronné* (700 – 1 199 m D+)
-  - 🎖️ *Guide de Haute Montagne* (1 200+ m D+)
-- **Carnet de Rando interactif (Bouton 📓)** : Comporte un onglet pour relire ses **Cartes « Je retiens »** et un onglet pour 5 fiches d'**Applications réelles** débloquées au fil de l'ascension :
-  1. *Topographie & Satellites* (Modèles Numériques de Terrain IGN / MNT)
-  2. *Drones & Secours alpin* (Vision par ordinateur en haute montagne)
-  3. *Optique spatiale* (Radiométrie et saturation des capteurs solaires)
-  4. *Sécurité en montagne* (Cartes de vigilance avalanches sur pentes > 30°)
-  5. *Intelligence Artificielle* (Réseaux convolutifs profonds CNN)
-- **Mascotte Bastien le Guide** : Illustration vectorielle SVG 100% originale et bienveillante accompagnant chaque étape avec des conseils imagés.
-- **Sauvegarde LocalStorage sécurisée** : Votre progression et vos cartes débloquées sont automatiquement enregistrées sur votre navigateur (version v2 avec migration automatique), avec possibilité de réinitialiser à tout moment.
-
----
-
-## 🛠️ Stack Technique
-
-- **Bundler & Dev Server** : Vite 8
-- **Framework UI** : React 19
-- **Langage** : TypeScript 5.7 strict (`noUncheckedIndexedAccess`, zéro `any`)
-- **Styles** : Tailwind CSS 4 + Design Tokens montagnards (`src/styles/tokens.ts`)
-- **Moteur graphique** : Canvas API HTML5 natif (haute performance, rendu pixel art)
-- **Audio** : Synthèse Web Audio API pure (altimètre sonore sans fichier audio externe)
-- **Tests** : Vitest (57 tests unitaires couvrant la totalité des calculs mathématiques et du système de progression)
-- **Linter & Formateur** : ESLint flat config + Prettier
-
----
-
-## 🚀 Lancement Rapide en Local
-
-### 1. Installation
 ```bash
+# 1. Install dependencies
 npm install
-```
 
-### 2. Démarrer le jeu
-```bash
+# 2. Start development server
 npm run dev
 ```
-Ouvrez ensuite votre navigateur sur **[http://localhost:5173/](http://localhost:5173/)**.
 
-### 3. Autres scripts utiles
-| Commande | Action |
-| :--- | :--- |
-| `npm run test` | Lance les 54 tests unitaires avec Vitest |
-| `npm run build` | Compile TypeScript et génère le bundle de production |
-| `npm run lint` | Analyse la qualité du code avec ESLint |
-| `npm run format` | Met en forme le code avec Prettier |
+Open your browser at **[http://localhost:5173/](http://localhost:5173/)**.
+
+To create a production build:
+```bash
+npm run build
+```
 
 ---
 
-## ♿ Accessibilité & Éthique
+## 📄 License
 
-- **Clavier & Focus** : Entièrement navigable au clavier avec anneaux de focus orange vif contrastés.
-- **Réduction des mouvements** : Respect de la directive système `prefers-reduced-motion` (désactivation douce des animations).
-- **Confort sonore** : Altimètre audio **désactivé par défaut**, activable au choix de l'utilisateur.
-- **Honnêteté des données** : Zéro fausse statistique ; chaque mètre de D+ et chaque calcul reflète strictement vos actions.
-
----
-
-## 📄 Licence
-
-Projet éducatif sous licence MIT — Conçu pour vulgariser la convolution matricielle de manière simple, visuelle et intuitive.
-Tous droits réservés © 2026 TrailKernel.
+Educational open-source project — Designed to make computer vision accessible and unforgettable for everyone.

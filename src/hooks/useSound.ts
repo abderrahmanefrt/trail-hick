@@ -23,6 +23,21 @@ export function useSound() {
     };
   }, []);
 
+  const getAudioContext = useCallback(() => {
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return null;
+
+    if (!ctxRef.current) {
+      ctxRef.current = new AudioCtx();
+    }
+    if (ctxRef.current.state === 'suspended') {
+      void ctxRef.current.resume();
+    }
+    return ctxRef.current;
+  }, []);
+
   const toggle = useCallback(() => {
     setEnabled((prev) => !prev);
   }, []);
@@ -31,21 +46,8 @@ export function useSound() {
   const playAltitude = useCallback(
     (altitude: number) => {
       if (!enabled) return;
-
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext })
-          .webkitAudioContext;
-      if (!AudioCtx) return;
-
-      if (!ctxRef.current) {
-        ctxRef.current = new AudioCtx();
-      }
-
-      const ctx = ctxRef.current;
-      if (ctx.state === 'suspended') {
-        void ctx.resume();
-      }
+      const ctx = getAudioContext();
+      if (!ctx) return;
 
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -62,8 +64,33 @@ export function useSound() {
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + 0.35);
     },
-    [enabled],
+    [enabled, getAudioContext],
   );
 
-  return { enabled, toggle, playAltitude };
+  /** Play an uplifting two-tone chime when a badge or milestone is unlocked. */
+  const playSuccessChime = useCallback(() => {
+    if (!enabled) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+
+      gain.gain.setValueAtTime(0.1, ctx.currentTime + idx * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.1 + 0.3);
+
+      osc.start(ctx.currentTime + idx * 0.1);
+      osc.stop(ctx.currentTime + idx * 0.1 + 0.3);
+    });
+  }, [enabled, getAudioContext]);
+
+  return { enabled, toggle, playAltitude, playSuccessChime };
 }
