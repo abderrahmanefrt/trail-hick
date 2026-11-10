@@ -20,6 +20,57 @@ import SummerMission from '@/features/missions/SummerMission';
 import FallMission from '@/features/missions/FallMission';
 import WinterMission from '@/features/missions/WinterMission';
 
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto my-12 p-8 bg-white rounded-3xl border border-amber-300 text-center space-y-4 shadow-xl">
+          <span className="text-4xl">🏔️</span>
+          <h2 className="text-xl font-black text-stone-900">Une pause sur le sentier !</h2>
+          <p className="text-xs text-stone-600 leading-relaxed">
+            Un imprévu est survenu lors de l'affichage de cette vue.
+          </p>
+          <div className="pt-2 flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                this.setState({ hasError: false });
+                window.location.reload();
+              }}
+              className="px-6 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs uppercase cursor-pointer shadow-md"
+            >
+              Recharger l'Expédition
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App(): React.JSX.Element {
   const [progress, setProgress] = useState<UserProgress>(() => loadTrailProgress());
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -226,7 +277,8 @@ export default function App(): React.JSX.Element {
 
       {/* Main View Area */}
       <main className="flex-1 w-full">
-        {progress.currentView === 'landing' && (
+        <ErrorBoundary>
+          {progress.currentView === 'landing' && (
           <LandingHero
             progress={progress}
             onStartAdventure={() => {
@@ -381,17 +433,18 @@ export default function App(): React.JSX.Element {
           </div>
         )}
 
-        {progress.currentView === 'reveal' && (
-          <FinalReveal
-            progress={progress}
-            onRestartFullAdventure={handleRestartFullAdventure}
-            onReplaySeasons={() => {
-              setProgress((p) => ({ ...p, currentView: 'seasons' }));
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onSelectSeason={handleSelectSeason}
-          />
-        )}
+          {progress.currentView === 'reveal' && (
+            <FinalReveal
+              progress={progress}
+              onRestartFullAdventure={handleRestartFullAdventure}
+              onReplaySeasons={() => {
+                setProgress((p) => ({ ...p, currentView: 'seasons' }));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onSelectSeason={handleSelectSeason}
+            />
+          )}
+        </ErrorBoundary>
       </main>
 
       {/* Floating Animated Companion: TRAILBOT */}

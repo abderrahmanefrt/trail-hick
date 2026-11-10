@@ -75,6 +75,7 @@ const PRESET_KERNELS: KernelPreset[] = [
 
 export default function FinalReveal({
   progress,
+  onRestartFullAdventure,
   onReplaySeasons,
   onSelectSeason,
 }: FinalRevealProps): React.JSX.Element {
@@ -95,42 +96,46 @@ export default function FinalReveal({
     const ctx = srcCanvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    const w = (srcCanvas.width = 180);
-    const h = (srcCanvas.height = 180);
+    try {
+      const w = (srcCanvas.width = 180);
+      const h = (srcCanvas.height = 180);
 
-    // Sky
-    const sky = ctx.createLinearGradient(0, 0, 0, h * 0.5);
-    sky.addColorStop(0, '#38BDF8');
-    sky.addColorStop(1, '#BAE6FD');
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, w, h);
+      // Sky
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.5);
+      sky.addColorStop(0, '#38BDF8');
+      sky.addColorStop(1, '#BAE6FD');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
 
-    // Peak
-    ctx.fillStyle = '#64748B';
-    ctx.beginPath();
-    ctx.moveTo(w * 0.1, h * 0.6);
-    ctx.lineTo(w * 0.5, h * 0.15);
-    ctx.lineTo(w * 0.9, h * 0.65);
-    ctx.fill();
+      // Peak
+      ctx.fillStyle = '#64748B';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.1, h * 0.6);
+      ctx.lineTo(w * 0.5, h * 0.15);
+      ctx.lineTo(w * 0.9, h * 0.65);
+      ctx.fill();
 
-    // Snowcap
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.moveTo(w * 0.5, h * 0.15);
-    ctx.lineTo(w * 0.38, h * 0.32);
-    ctx.lineTo(w * 0.46, h * 0.28);
-    ctx.lineTo(w * 0.54, h * 0.34);
-    ctx.lineTo(w * 0.62, h * 0.3);
-    ctx.fill();
+      // Snowcap
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.moveTo(w * 0.5, h * 0.15);
+      ctx.lineTo(w * 0.38, h * 0.32);
+      ctx.lineTo(w * 0.46, h * 0.28);
+      ctx.lineTo(w * 0.54, h * 0.34);
+      ctx.lineTo(w * 0.62, h * 0.3);
+      ctx.fill();
 
-    // Foreground grass and lake
-    ctx.fillStyle = '#15803D';
-    ctx.fillRect(0, h * 0.6, w, h * 0.4);
+      // Foreground grass and lake
+      ctx.fillStyle = '#15803D';
+      ctx.fillRect(0, h * 0.6, w, h * 0.4);
 
-    ctx.fillStyle = '#0284C7';
-    ctx.beginPath();
-    ctx.ellipse(w * 0.5, h * 0.8, w * 0.4, h * 0.15, 0, 0, Math.PI * 2);
-    ctx.fill();
+      ctx.fillStyle = '#0284C7';
+      ctx.beginPath();
+      ctx.ellipse(w * 0.5, h * 0.8, w * 0.4, h * 0.15, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } catch (e) {
+      console.warn('Canvas source draw error:', e);
+    }
   }, []);
 
   // Run live 3x3 convolution
@@ -143,44 +148,48 @@ export default function FinalReveal({
     const outCtx = outCanvas.getContext('2d');
     if (!srcCtx || !outCtx) return;
 
-    const w = (outCanvas.width = srcCanvas.width);
-    const h = (outCanvas.height = srcCanvas.height);
+    try {
+      const w = (outCanvas.width = srcCanvas.width || 180);
+      const h = (outCanvas.height = srcCanvas.height || 180);
 
-    const srcImg = srcCtx.getImageData(0, 0, w, h);
-    const src = srcImg.data;
-    const outImg = outCtx.createImageData(w, h);
-    const dst = outImg.data;
+      const srcImg = srcCtx.getImageData(0, 0, w, h);
+      const src = srcImg.data;
+      const outImg = outCtx.createImageData(w, h);
+      const dst = outImg.data;
 
-    const vals = isCustomMode ? customValues : activePreset.values;
-    const div = Math.max(0.001, isCustomMode ? customDivisor : activePreset.divisor);
-    const offset = activePreset.offset;
+      const vals = isCustomMode ? customValues : activePreset.values;
+      const div = Math.max(0.001, isCustomMode ? customDivisor : activePreset.divisor);
+      const offset = activePreset.offset;
 
-    for (let y = 1; y < h - 1; y++) {
-      for (let x = 1; x < w - 1; x++) {
-        let sumR = 0;
-        let sumG = 0;
-        let sumB = 0;
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          let sumR = 0;
+          let sumG = 0;
+          let sumB = 0;
 
-        let ki = 0;
-        for (let ky = -1; ky <= 1; ky++) {
-          for (let kx = -1; kx <= 1; kx++) {
-            const weight = vals[ki++] ?? 0;
-            const idx = ((y + ky) * w + (x + kx)) * 4;
-            sumR += (src[idx] ?? 0) * weight;
-            sumG += (src[idx + 1] ?? 0) * weight;
-            sumB += (src[idx + 2] ?? 0) * weight;
+          let ki = 0;
+          for (let ky = -1; ky <= 1; ky++) {
+            for (let kx = -1; kx <= 1; kx++) {
+              const weight = vals[ki++] ?? 0;
+              const idx = ((y + ky) * w + (x + kx)) * 4;
+              sumR += (src[idx] ?? 0) * weight;
+              sumG += (src[idx + 1] ?? 0) * weight;
+              sumB += (src[idx + 2] ?? 0) * weight;
+            }
           }
+
+          const outIdx = (y * w + x) * 4;
+          dst[outIdx] = Math.max(0, Math.min(255, Math.round(sumR / div + offset)));
+          dst[outIdx + 1] = Math.max(0, Math.min(255, Math.round(sumG / div + offset)));
+          dst[outIdx + 2] = Math.max(0, Math.min(255, Math.round(sumB / div + offset)));
+          dst[outIdx + 3] = 255;
         }
-
-        const outIdx = (y * w + x) * 4;
-        dst[outIdx] = Math.max(0, Math.min(255, Math.round(sumR / div + offset)));
-        dst[outIdx + 1] = Math.max(0, Math.min(255, Math.round(sumG / div + offset)));
-        dst[outIdx + 2] = Math.max(0, Math.min(255, Math.round(sumB / div + offset)));
-        dst[outIdx + 3] = 255;
       }
-    }
 
-    outCtx.putImageData(outImg, 0, 0);
+      outCtx.putImageData(outImg, 0, 0);
+    } catch (e) {
+      console.warn('Convolution calculation error:', e);
+    }
   }, [activePreset, isCustomMode, customValues, customDivisor]);
 
   useEffect(() => {
@@ -345,7 +354,7 @@ export default function FinalReveal({
               1. Original Input Image
             </span>
             <div className="rounded-2xl border-4 border-stone-300 bg-stone-900 p-1 shadow-md">
-              <canvas ref={srcCanvasRef} className="block w-[180px] h-[180px] rounded-xl" />
+              <canvas ref={srcCanvasRef} width={180} height={180} className="block w-[180px] h-[180px] rounded-xl" />
             </div>
             <span className="text-[11px] text-stone-500">Matrix of RGB Pixel Values</span>
           </div>
@@ -396,7 +405,7 @@ export default function FinalReveal({
               3. Convolved Result
             </span>
             <div className="rounded-2xl border-4 border-emerald-600 bg-stone-900 p-1 shadow-md">
-              <canvas ref={outCanvasRef} className="block w-[180px] h-[180px] rounded-xl" />
+              <canvas ref={outCanvasRef} width={180} height={180} className="block w-[180px] h-[180px] rounded-xl" />
             </div>
             <span className="text-[11px] text-emerald-700 font-bold">
               Transformed Image Output
